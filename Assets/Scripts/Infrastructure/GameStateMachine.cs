@@ -1,5 +1,11 @@
 using System;
 using System.Collections.Generic;
+using Infrastructure.Data;
+using Infrastructure.Factory;
+using Infrastructure.Services;
+using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.SaveLoad;
+using Infrastructure.States;
 
 namespace Infrastructure
 {
@@ -7,27 +13,31 @@ namespace Infrastructure
     {
         private Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
+        private LoadingCurtain _loadingCurtain;
 
-        public GameStateMachine(SceneLoader sceneLoder)
+        public GameStateMachine(SceneLoader sceneLoder, LoadingCurtain loadingCurtain, AllServices services)
         {
+            _loadingCurtain = loadingCurtain;
             _states = new Dictionary<Type, IExitableState>()
             {
-                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoder),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoder)
+                [typeof(BootstrapState)] = new BootstrapState(this, sceneLoder, services),
+                [typeof(LoadLevelState)] = new LoadLevelState(this, sceneLoder, loadingCurtain, services.GetSingle<IGameFactory>()),
+                [typeof(LoadProgressState)] = new LoadProgressState(this, 
+                    services.GetSingle<IPersistantProgressService>(),
+                    services.GetSingle<ISaveLoadService>()),
+                [typeof(GameLoopState)] = new GameLoopState(this),
             };
         }
 
         public void Enter<TState>() where TState : class, IState
         {
             var state = ChangeActiveAndGetNewState<TState>();
-
             state.Enter();
         }
 
         public void Enter<TState, TPayload>(TPayload payload) where TState : class, IPayloadedState<TPayload>
         {
             var state = ChangeActiveAndGetNewState<TState>();
-            
             state.Enter(payload);
         }
 

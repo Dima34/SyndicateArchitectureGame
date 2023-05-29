@@ -1,14 +1,16 @@
 using Infrastructure;
+using Infrastructure.Factory;
+using Infrastructure.Services;
 using Services.Inputs;
 using UnityEngine;
 
 public class Game
 {
-    public static IInputService InputService;
     public readonly GameStateMachine StateMachine;
 
-    public Game(ICoroutineRunner coroutineRunner)
+    public Game(ICoroutineRunner coroutineRunner, LoadingCurtain loadingCurtain)
     {
-        StateMachine = new GameStateMachine(new SceneLoader(coroutineRunner));
+        var services = AllServices.Container;
+        StateMachine = new GameStateMachine(new SceneLoader(coroutineRunner), loadingCurtain, services);
     }
 }
