@@ -89,12 +89,13 @@ namespace Player
             }
         }
 
-        private void Warp(Vector3 to)
+        private void Warp(Vector3 newPosition)
         {
             // Enabling\disabling characterController because it dont like when we move his parent through transform.
             // He can stuck somewhere, so we disable it for that operation
             _characterController.enabled = false;
-            transform.position = to;
+            var saveVector = new Vector3(0, _characterController.height, 0);
+            transform.position = newPosition.AddVector(saveVector);
             _characterController.enabled = true;
         }
     }

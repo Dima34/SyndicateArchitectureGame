@@ -20,7 +20,7 @@ namespace Infrastructure.States
             _stateMachine = stateMachine;
             _sceneLoader = sceneLoader;
             _services = services;
-            
+
             RegisterServices();
         }
 
@@ -30,7 +30,9 @@ namespace Infrastructure.States
             _services.RegisterSingle<IGameFactory>(new GameFactory(_services.GetSingle<IAssetProvider>()));
             _services.RegisterSingle<IInputService>(GetInputService());
             _services.RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
-            _services.RegisterSingle<ISaveLoadService>(new SaveLoadService());
+            _services.RegisterSingle<ISaveLoadService>(new SaveLoadService(
+                _services.GetSingle<IGameFactory>(), 
+                    _services.GetSingle<IPersistantProgressService>()));
         }
 
         public void Enter()

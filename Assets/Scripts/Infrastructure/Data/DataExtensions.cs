@@ -1,4 +1,5 @@
 using Infrastructure.Services.PersistantProgress;
+using UnityEditor;
 using UnityEngine;
 
 namespace Infrastructure.Data
@@ -13,5 +14,19 @@ namespace Infrastructure.Data
 
         public static T ToDeserialized<T>(this string json) => 
             JsonUtility.FromJson<T>(json);
+
+        public static string ToJson(this object progress)
+        {
+            return JsonUtility.ToJson(progress);
+        }
+
+        public static Vector3 AddVector(this Vector3 vector, Vector3 vectorToadd)
+        {
+            vector.x += vectorToadd.x;
+            vector.y += vectorToadd.y;
+            vector.z += vectorToadd.z;
+
+            return vector;
+        }
     }
 }

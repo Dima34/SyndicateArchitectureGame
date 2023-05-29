@@ -2,6 +2,7 @@ using Infrastructure;
 using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.States;
+using Logic;
 using UnityEngine;
 
 public class GameBootstrapper : MonoBehaviour, ICoroutineRunner

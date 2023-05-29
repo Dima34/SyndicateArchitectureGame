@@ -19,16 +19,34 @@ namespace Infrastructure.Factory
             _assetProvider = assetProvider;
         }
 
-        public GameObject CreateHero(GameObject at)
-        {
-            var gameObject = _assetProvider.InstantiateResourse(AssetPath.HERO_PATH, at.transform.position);
+        public GameObject CreateHero(Vector3 instantiatePosition) => 
+            InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
 
-            RegisterProgressReaders(gameObject);
-            RegisterProgressWriters(gameObject);
-            
+        public void CreateHUD()
+        {
+            InstantiateResourceAndRegisterDataUsers(AssetPath.HUD_PATH);
+        }
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath, Vector3 at)
+        {
+            var gameObject = _assetProvider.InstantiateResourse(assetPath, at);
+            RegisterHeroDataUsers(gameObject);
             return gameObject;
         }
-        
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath)
+        {
+            var gameObject = _assetProvider.InstantiateResourse(assetPath);
+            RegisterHeroDataUsers(gameObject);
+            return gameObject;
+        }
+
+        private void RegisterHeroDataUsers(GameObject gameObject)
+        {
+            RegisterProgressReaders(gameObject);
+            RegisterProgressWriters(gameObject);
+        }
+
         private void RegisterProgressReaders(GameObject gameObject) => 
             FindComponentsAndAddToList<ISavedProgressReader>(gameObject, ProgressReaders);
 
@@ -40,11 +58,6 @@ namespace Infrastructure.Factory
             var memebers = gameObject.GetComponentsInChildren<MemberType>();
             for (int i = 0; i < memebers.Length; i++)
                 membersList.Add(memebers[i]);
-        }
-
-        public void CreateHUD()
-        {
-            _assetProvider.InstantiateResourse(AssetPath.HUD_PATH);
         }
 
         public void CleanupProgressMembersList()

@@ -1,14 +1,17 @@
+using System;
+
 namespace Infrastructure.Data
 {
+    [Serializable]
     public class PositionOnLevel
     {
-        public string LevelName { get; }
-        public Vector3Data Position { get; }
+        public Vector3Data Position;
+        public string LevelName;
 
         public PositionOnLevel(string levelName, Vector3Data position)
         {
-            LevelName = levelName;
             Position = position;
+            LevelName = levelName;
         }
 
         public PositionOnLevel(string initialLevel)

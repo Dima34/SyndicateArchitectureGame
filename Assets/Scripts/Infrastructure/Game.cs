@@ -1,6 +1,7 @@
 using Infrastructure;
 using Infrastructure.Factory;
 using Infrastructure.Services;
+using Logic;
 using Services.Inputs;
 using UnityEngine;
 
