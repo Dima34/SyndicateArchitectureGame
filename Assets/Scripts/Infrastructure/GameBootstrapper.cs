@@ -1,6 +1,3 @@
-using Infrastructure;
-using Infrastructure.AssetManagement;
-using Infrastructure.Factory;
 using Infrastructure.States;
 using Logic;
 using UnityEngine;
@@ -9,11 +6,12 @@ public class GameBootstrapper : MonoBehaviour, ICoroutineRunner
 {
     private Game _game;
     [SerializeField]
-    private LoadingCurtain _loadingCurtain;
+    private LoadingCurtain _loadingCurtainPrefab;
 
     private void Awake()
     {
-        _game = new Game(this, _loadingCurtain);
+        var curtain = Instantiate(_loadingCurtainPrefab);
+        _game = new Game(this, curtain);
         _game.StateMachine.Enter<BootstrapState>();
         
         DontDestroyOnLoad(this);

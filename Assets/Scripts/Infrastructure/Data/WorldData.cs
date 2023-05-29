@@ -1,15 +1,23 @@
 using System;
+using UnityEngine;
 
 namespace Infrastructure.Data
 {
     [Serializable]
     public class WorldData
     {
-        public PositionOnLevel PositionOnLevel;
+        public PositionOnLevel PositionOnLevel
+        {
+            get => _positionOnLevel;
+            set => _positionOnLevel = value;
+        }
+        
+        [SerializeField]
+        private PositionOnLevel _positionOnLevel;
 
         public WorldData(string initialLevel)
         {
-            PositionOnLevel = new PositionOnLevel(initialLevel);
+            _positionOnLevel = new PositionOnLevel(initialLevel);
         }
     }
 }

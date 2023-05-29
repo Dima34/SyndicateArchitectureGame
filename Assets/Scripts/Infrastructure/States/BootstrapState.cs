@@ -12,7 +12,6 @@ namespace Infrastructure.States
     {
         private readonly GameStateMachine _stateMachine;
         private readonly SceneLoader _sceneLoader;
-        private AllServices _allServices;
         private AllServices _services;
 
         public BootstrapState(GameStateMachine stateMachine, SceneLoader sceneLoader, AllServices services)

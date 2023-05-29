@@ -14,11 +14,9 @@ namespace Infrastructure
     {
         private Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
-        private LoadingCurtain _loadingCurtain;
 
         public GameStateMachine(SceneLoader sceneLoder, LoadingCurtain loadingCurtain, AllServices services)
         {
-            _loadingCurtain = loadingCurtain;
             _states = new Dictionary<Type, IExitableState>()
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoder, services),

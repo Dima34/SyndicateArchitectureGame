@@ -1,22 +1,38 @@
 using System;
+using UnityEngine;
 
 namespace Infrastructure.Data
 {
     [Serializable]
     public class PositionOnLevel
     {
-        public Vector3Data Position;
-        public string LevelName;
+        [SerializeField]
+        private string _levelName;
+        [SerializeField]
+        private Vector3Data _position;
+
+        public string LevelName
+        {
+            get => _levelName;
+            set => _levelName = value;
+        }
+        
+        public Vector3Data Position
+        {
+            get => _position;
+            set => _position = value;
+        }
 
         public PositionOnLevel(string levelName, Vector3Data position)
         {
-            Position = position;
-            LevelName = levelName;
+            _position = position;
+            _levelName = levelName;
         }
 
-        public PositionOnLevel(string initialLevel)
+
+        public PositionOnLevel(string levelName)
         {
-            LevelName = initialLevel;
+            _levelName = levelName;
         }
     }
 }
