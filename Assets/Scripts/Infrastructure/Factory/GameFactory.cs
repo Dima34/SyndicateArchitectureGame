@@ -10,17 +10,24 @@ namespace Infrastructure.Factory
     public class GameFactory : IGameFactory
     {
         private readonly IAssetProvider _assetProvider;
+        private GameObject _heroGameObject;
 
         public List<ISavedProgressReader> ProgressReaders { get; } = new List<ISavedProgressReader>();
         public List<ISavedProgressWriter> ProgressWriters { get; } = new List<ISavedProgressWriter>();
+        public GameObject HeroGameObject => _heroGameObject;
+        public event Action HeroCreated;
 
         public GameFactory(IAssetProvider assetProvider)
         {
             _assetProvider = assetProvider;
         }
 
-        public GameObject CreateHero(Vector3 instantiatePosition) => 
-            InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
+        public GameObject CreateHero(Vector3 instantiatePosition) { 
+            _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
+            HeroCreated?.Invoke();
+            
+            return _heroGameObject;
+        } 
 
         public void CreateHUD()
         {
