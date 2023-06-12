@@ -15,9 +15,9 @@ namespace Infrastructure.Data
         [SerializeField]
         private PositionOnLevel _positionOnLevel;
 
-        public WorldData(string initialLevel)
+        public WorldData()
         {
-            _positionOnLevel = new PositionOnLevel(initialLevel);
+            _positionOnLevel = new PositionOnLevel();
         }
     }
 }

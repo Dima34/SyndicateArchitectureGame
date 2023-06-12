@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
+using Logic;
 using UnityEngine;
 
 namespace Enemy
 {
     public class Aggro : MonoBehaviour
     {
-        [SerializeField] private TriggerObserver _triggerObserver;
+        [SerializeField] private TriggerZone triggerZone;
         [SerializeField] private Follow _follow;
         [SerializeField] private float _cooldown = 2f;
         
@@ -14,19 +15,19 @@ namespace Enemy
 
         private void Start()
         {
-            _triggerObserver.TriggerEnter += TriggerEnter;
-            _triggerObserver.TriggerExit += TriggerExit;
+            triggerZone.ZoneEnter += ZoneEnter;
+            triggerZone.ZoneExit += ZoneExit;
 
             SwitchFollowOFF();
         }
 
-        private void TriggerEnter(Collider obj)
+        private void ZoneEnter(Collider obj)
         {
             StopAggroCoroutineIfExist();   
             SwitchFollowON();
         }
 
-        private void TriggerExit(Collider obj)
+        private void ZoneExit(Collider obj)
         {
             if(_disableAggroCoroutine == null)
                 _disableAggroCoroutine = StartCoroutine(SwitchAgroOffAfterCooldown());
@@ -48,7 +49,6 @@ namespace Enemy
 
         private IEnumerator SwitchAgroOffAfterCooldown()
         {
-            Debug.Log("Un Aggro process started");
             float timer = 0;
 
             yield return new WaitForSeconds(_cooldown);

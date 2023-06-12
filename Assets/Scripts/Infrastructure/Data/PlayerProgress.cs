@@ -6,13 +6,22 @@ namespace Infrastructure.Data
     [Serializable]
     public class PlayerProgress
     {
-        public WorldData WorldData => _worldData;
-        [SerializeField]
-        private WorldData _worldData;
+        [SerializeField] private WorldData _worldData;
+        [SerializeField] private State _heroState;
 
-        public PlayerProgress(string initialLevel)
+        public WorldData WorldData => _worldData;
+
+        public State HeroState
         {
-            _worldData = new WorldData(initialLevel);
+            get => _heroState;
+            set => _heroState = value;
+        }
+
+
+        public PlayerProgress()
+        {
+            _worldData = new WorldData();
+            _heroState = new State();
         }
     }
 }

@@ -13,10 +13,10 @@ namespace Infrastructure.Factory
         List<ISavedProgressWriter> ProgressWriters { get; }
         GameObject HeroGameObject { get; }
 
-        event Action HeroCreated;
+        event Action OnHeroCreated;
 
         GameObject CreateHero(Vector3 instantiatePosition);
-        void CreateHUD();
+        GameObject CreateHUD();
         void CleanupProgressMembersList();
     }
 }

@@ -28,11 +28,8 @@ namespace Infrastructure.Data
             _position = position;
             _levelName = levelName;
         }
-
-
-        public PositionOnLevel(string levelName)
-        {
-            _levelName = levelName;
-        }
+        
+        public PositionOnLevel()
+        { }
     }
 }

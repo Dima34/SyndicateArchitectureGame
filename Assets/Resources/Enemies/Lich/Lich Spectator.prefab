@@ -63,6 +63,10 @@ PrefabInstance:
       propertyPath: _cooldown
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9090415316517606558, guid: 7ed3e345f07e89940ae0c1e00eeb7d1d, type: 3}
+      propertyPath: triggerZone
+      value: 
+      objectReference: {fileID: 7159198539498351116}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7ed3e345f07e89940ae0c1e00eeb7d1d, type: 3}
 --- !u!1 &1555703356397991821 stripped
@@ -83,3 +87,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 3
+--- !u!114 &7159198539498351116 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8560325663837838161, guid: 7ed3e345f07e89940ae0c1e00eeb7d1d, type: 3}
+  m_PrefabInstance: {fileID: 1555703356398088541}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8364144db1541b4b1ecb5e0831c6093, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

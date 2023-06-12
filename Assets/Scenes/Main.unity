@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8027734339460696887, guid: b4a3b31ec9ba946dd8267de101db388a, type: 3}
       propertyPath: m_Name
-      value: Lich Follower
+      value: Lich Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 8027734339460863831, guid: b4a3b31ec9ba946dd8267de101db388a, type: 3}
       propertyPath: m_RootOrder

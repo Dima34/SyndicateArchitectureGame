@@ -32,12 +32,21 @@ namespace Infrastructure.States
             _progressService.Progress = _saveLoadService.LoadProgress() ?? NewProgress();
         }
 
-        private PlayerProgress NewProgress() => 
-            new PlayerProgress(Constants.MAIN_LEVEL_NAME);
+        private PlayerProgress NewProgress()
+        {
+            var playerProgress = new PlayerProgress();
+
+            playerProgress.WorldData.PositionOnLevel.LevelName = Constants.START_LEVEL_NAME ;
+
+            playerProgress.HeroState.MaxHp = Constants.HERO_MAX_HP;
+            playerProgress.HeroState.ResetHP();
+            
+            return playerProgress;
+        }
 
         private void LoadCurrentLevel(string currentLevel)
         {
-            _stateMachine.Enter<LoadLevelState, string>(currentLevel);
+            _stateMachine.Enter<LoadSceneState, string>(currentLevel);
         }
 
         public void Exit()

@@ -916,7 +916,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d3d6dfcdf642dc8dd0c0b8477a4b96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _triggerObserver: {fileID: 8560325663837838161}
+  triggerZone: {fileID: 0}
   _follow: {fileID: 0}
   _cooldown: 2
 --- !u!114 &7969503082680429295

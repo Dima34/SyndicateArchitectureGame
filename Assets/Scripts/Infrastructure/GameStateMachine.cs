@@ -20,7 +20,7 @@ namespace Infrastructure
             _states = new Dictionary<Type, IExitableState>()
             {
                 [typeof(BootstrapState)] = new BootstrapState(this, sceneLoder, services),
-                [typeof(LoadLevelState)] = new LoadLevelState(this, 
+                [typeof(LoadSceneState)] = new LoadSceneState(this, 
                     sceneLoder, 
                     loadingCurtain, 
                     services.GetSingle<IGameFactory>(),

@@ -23,7 +23,7 @@ namespace Enemy
             _gameFactory.HeroGameObject == null;
 
         private void AssignHeroWhenHeroCreated() =>
-            _gameFactory.HeroCreated += AssignHeroTransform;
+            _gameFactory.OnHeroCreated += AssignHeroTransform;
 
         private void AssignHeroTransform() =>
             _heroTransform = _gameFactory.HeroGameObject.transform;
