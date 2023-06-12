@@ -68,10 +68,8 @@ namespace Enemy
 
         private void OnAttack()
         {
-            if (Hit(out Collider hit))
-            {
-                PhysicsDebug.DebugLineSpere(HitStartPoint(), _cleavage, 1f);
-            }
+            if (Hit(out Collider hit)) 
+                hit.transform.GetComponent<HeroHealth>().TakeDamage(_damage);
         }
 
         private bool Hit(out Collider hit)
@@ -79,7 +77,9 @@ namespace Enemy
             int hitsCount = Physics.OverlapSphereNonAlloc(HitStartPoint(), _cleavage, _hits, _layerMask);
 
             hit = _hits.FirstOrDefault();
-            hit.transform.GetComponent<HeroHealth>().TakeDamage(_damage);
+#if UNITY_EDITOR
+            PhysicsDebug.DebugLineSpere(HitStartPoint(), _cleavage, 1f);
+#endif
 
             return hitsCount > 0;
         }

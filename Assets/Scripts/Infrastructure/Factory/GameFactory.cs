@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Infrastructure.AssetManagement;
+using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
-using Unity.VisualScripting;
+using Player;
+using Services.Inputs;
 using UnityEngine;
 
 namespace Infrastructure.Factory
@@ -24,6 +26,8 @@ namespace Infrastructure.Factory
 
         public GameObject CreateHero(Vector3 instantiatePosition) { 
             _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
+            HeroAttack heroAttack = _heroGameObject.GetComponent<HeroAttack>();
+            heroAttack.Construct(AllServices.Container.GetSingle<IInputService>());
             OnHeroCreated?.Invoke();
             
             return _heroGameObject;

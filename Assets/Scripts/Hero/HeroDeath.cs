@@ -19,12 +19,13 @@ namespace Player
 
         private void OnHealthChanged()
         {
-            if (_heroHealth.Current <= 0 && _isDead) 
+            if (_heroHealth.Current <= 0 && !_isDead) 
                 Die();
         }
 
         private void Die()
         {
+            Debug.LogWarning("Death...");
             DisableMovement();
             PlayDeathFX();
             _isDead = true;

@@ -1,3 +1,4 @@
+using Enemy;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
@@ -8,6 +9,7 @@ using UnityEngine.SceneManagement;
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(HeroAnimator))]
     public class HeroMove : MonoBehaviour, ISavedProgressWriter, ISavedProgressReader
     {
         [SerializeField] private float _movementSpeed = 2f;
@@ -15,11 +17,13 @@ namespace Player
         private CharacterController _characterController;
         private IInputService _inputService;
         private Camera _camera;
+        private HeroAnimator _heroAnimator;
 
         private void Awake()
         {
             _inputService = AllServices.Container.GetSingle<IInputService>();
             _characterController = GetComponent<CharacterController>();
+            _heroAnimator = GetComponent<HeroAnimator>();
         }
 
         private void Start()
@@ -36,8 +40,9 @@ namespace Player
                 movementVector = GetNewMovementVector();
                 SetPlayerForwardDirection(movementVector);
             }
-
+            
             MovePlayer(movementVector);
+            AnimatePlayer(movementVector);
             ApplyGravity();
         }
 
@@ -57,8 +62,15 @@ namespace Player
         private void MovePlayer(Vector3 movementVector)
         {
             Vector3 newPlayerPosition = _movementSpeed * movementVector * Time.deltaTime;
-
             _characterController.Move(newPlayerPosition);
+        }
+
+        private void AnimatePlayer(Vector3 movementVector)
+        {
+            if(movementVector.magnitude > 0)
+                _heroAnimator.Move(movementVector.magnitude);
+            else
+                _heroAnimator.StopMoving();
         }
 
         void ApplyGravity()
