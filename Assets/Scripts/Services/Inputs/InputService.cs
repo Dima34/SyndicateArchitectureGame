@@ -12,15 +12,11 @@ namespace Services.Inputs
 
         public abstract bool IsAttackButtonUp();
 
-        protected static bool IsUnityFireButtonCliked()
-        {
-            return Input.GetAxis(FIRE_BUTTON) > 0;
-        }
+        protected static bool IsUnityFireButtonCliked() =>
+            Input.GetAxis(FIRE_BUTTON) > 0;
 
-        protected static bool IsSimpleInputFireClicked()
-        {
-            return SimpleInput.GetButtonUp(FIRE_BUTTON);
-        }
+        protected static bool IsSimpleInputFireClicked() =>
+            SimpleInput.GetButtonUp(FIRE_BUTTON);
 
         protected static Vector2 GetUnityAxis() =>
             new Vector2(Input.GetAxis(HORIZONTAL_AXIS), Input.GetAxis(VERTICAL_AXIS));

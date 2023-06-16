@@ -1,21 +1,32 @@
-using System;
+using Enemy;
+using Infrastructure;
+using Infrastructure.Data;
+using Infrastructure.Services.PersistantProgress;
+using Logic;
 using Services.Inputs;
 using UnityEngine;
 
-namespace Player
+namespace Hero
 {
     [RequireComponent(typeof(CharacterController))]
-    public class HeroAttack : MonoBehaviour
+    [RequireComponent(typeof(HeroAnimator))]
+    public class HeroAttack : MonoBehaviour, ISavedProgressReader
     {
         [SerializeField] private CharacterController _characterController;
-
+        [SerializeField] private HeroAnimator _heroAnimator;
+        
         private IInputService _inputService;
         private int _layerMask;
+        // Physics.overlap dont recreate hit array. It will find as many object as array lenght
+        private Collider[] _hits = new Collider[Constants.HITOBJECTS_PER_HIT];
+        private int _attackDamage;
+        private HeroStats _heroStats;
 
-        private void Awake()
-        {
-            _layerMask = 1 << LayerMask.NameToLayer("Hittable");
-        }
+        private void Awake() =>
+            _layerMask = 1 << LayerMask.NameToLayer(Constants.HIITBLE_LAYERNAME);
+
+        public void Construct(IInputService inputService) =>
+            _inputService = inputService;
 
         private void Update()
         {
@@ -23,21 +34,33 @@ namespace Player
                 Attack();
         }
 
-        private void Attack()
+        public void LoadProgress(PlayerProgress progress) =>
+            _heroStats = progress.HeroStats;
+
+        private void Attack() =>
+            _heroAnimator.PlayAttack();
+
+        private void OnAttack()
         {
-            
+            for (int i = 0; i < Hit(); i++)
+            {
+                var hitObjectHealth = _hits[i].transform.parent.GetComponent<IHealth>();
+                hitObjectHealth?.TakeDamage(_heroStats.Damage);
+            }
         }
 
         private int Hit()
         {
-            return 0;   
+#if UNITY_EDITOR
+            PhysicsDebug.DebugLineSpere(AttackStartPos(), _heroStats.HitRadius, 0.5f);
+#endif
+            return Physics.OverlapSphereNonAlloc(AttackStartPos(), _heroStats.HitRadius, _hits, _layerMask);
         }
 
-        public void Construct(IInputService inputService)
+        private Vector3 AttackStartPos()
         {
-            _inputService = inputService;
+            var forwardHitOffset = _heroStats.HitForwardOffset * transform.forward;
+            return new Vector3(transform.position.x, transform.position.y, transform.position.z) + forwardHitOffset;
         }
-        
-        
     }
 }

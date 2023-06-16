@@ -1,4 +1,3 @@
-using Enemy;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
@@ -6,7 +5,7 @@ using Services.Inputs;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Player
+namespace Hero
 {
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(HeroAnimator))]

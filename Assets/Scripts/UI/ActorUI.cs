@@ -1,5 +1,6 @@
 using System;
-using Player;
+using Hero;
+using Logic;
 using UnityEngine;
 
 namespace UI
@@ -8,20 +9,19 @@ namespace UI
     {
         [SerializeField] private HpBar _hpBar;
 
-        private HeroHealth _heroHealth;
+        private IHealth _health;
 
-        private void UpdateHpBar()
-        {
-            _hpBar.SetValue(_heroHealth.Current, _heroHealth.Max);
-        }
+        private void UpdateHpBar() =>
+            _hpBar.SetValue(_health.CurrentHP, _health.MaxHP);
 
-        public void Construct(HeroHealth heroHealth)
+        
+        public void Construct(IHealth health)
         {
-            _heroHealth = heroHealth;
-            _heroHealth.OnHealthChanged += UpdateHpBar;
+            _health = health;
+            _health.OnHealthChanged += UpdateHpBar;
         }
 
         private void OnDestroy() =>
-            _heroHealth.OnHealthChanged -= UpdateHpBar;
+            _health.OnHealthChanged -= UpdateHpBar;
     }
 }

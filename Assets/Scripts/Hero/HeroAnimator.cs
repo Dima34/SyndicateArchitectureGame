@@ -1,8 +1,9 @@
 using System;
+using Enemy;
 using UnityEditor.Animations;
 using UnityEngine;
 
-namespace Enemy
+namespace Hero
 {
     [RequireComponent(typeof(Animator))]
     public class HeroAnimator : MonoBehaviour, IAnimationStateReader

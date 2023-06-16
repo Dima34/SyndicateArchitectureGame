@@ -1,8 +1,6 @@
 using System.Linq;
-using Infrastructure.Factory;
-using Infrastructure.Services;
+using Infrastructure;
 using Logic;
-using Player;
 using UnityEngine;
 
 namespace Enemy
@@ -11,12 +9,11 @@ namespace Enemy
     public class Attack : TriggerZoneComponentToToggle
     {
         [SerializeField] private EnemyAnimator _animator;
-        [SerializeField] private float _attackCooldown = 3f;
-        [SerializeField] private float _cleavage = 1f;
+        [SerializeField] private float _attackCooldown;
+        [SerializeField] private float _cleavage;
         [SerializeField] private float _effectiveDistance;
-        [SerializeField] private float _damage = 13;
+        [SerializeField] private float _damage;
 
-        private IGameFactory _gameFactory;
         private Transform _heroTransform;
         private float _timeToNextAttack;
         private bool _isAtacking;
@@ -24,12 +21,40 @@ namespace Enemy
         private int _layerMask;
 
         private const float HIT_STARTPOINT_Y_CORRECTION = 0.5f;
-        
+
+        public float AttackCooldown
+        {
+            get => _attackCooldown;
+            set => _attackCooldown = value;
+        }
+
+        public float Cleavage
+        {
+            get => _cleavage;
+            set => _cleavage = value;
+        }
+
+        public float EffectiveDistance
+        {
+            get => _effectiveDistance;
+            set => _effectiveDistance = value;
+        }
+
+        public float Damage
+        {
+            get => _damage;
+            set => _damage = value;
+        }
+
+        private bool CanAttack() =>
+            _isHeroInZone && CooldownIsUp() && !_isAtacking;
+
+        private bool CooldownIsUp() =>
+            _timeToNextAttack <= 0;
+
         private void Awake()
         {
-            _gameFactory = AllServices.Container.GetSingle<IGameFactory>();
-            _gameFactory.OnHeroCreated += RegisterHeroTransform;
-            _layerMask = 1 << LayerMask.NameToLayer("Player");
+            _layerMask = 1 << LayerMask.NameToLayer(Constants.PLAYER_LAYERNAME);
         }
 
         private void Update()
@@ -40,14 +65,9 @@ namespace Enemy
                 DecreaseTimeToNextAttack();
         }
 
-        private void RegisterHeroTransform() =>
-            _heroTransform = _gameFactory.HeroGameObject.transform;
+        public void Construct(Transform transform) =>
+            _heroTransform = transform;
 
-        private bool CanAttack() =>
-            _isHeroInZone &&  CooldownIsUp() && !_isAtacking;
-
-        private bool CooldownIsUp() =>
-            _timeToNextAttack <= 0;
 
         private void StartAttack()
         {
@@ -69,7 +89,7 @@ namespace Enemy
         private void OnAttack()
         {
             if (Hit(out Collider hit)) 
-                hit.transform.GetComponent<HeroHealth>().TakeDamage(_damage);
+                hit.transform.GetComponent<IHealth>()?.TakeDamage(_damage);
         }
 
         private bool Hit(out Collider hit)
@@ -85,10 +105,9 @@ namespace Enemy
         }
 
         private Vector3 HitStartPoint() =>
-            new Vector3(transform.position.x, transform.position.y + HIT_STARTPOINT_Y_CORRECTION, transform.position.z) + EffectiveDistance();
+            new Vector3(transform.position.x, transform.position.y + HIT_STARTPOINT_Y_CORRECTION, transform.position.z) + HitDistance();
 
-        private Vector3 EffectiveDistance() => 
+        private Vector3 HitDistance() => 
             transform.forward * _effectiveDistance;
-
     }
 }

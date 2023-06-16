@@ -1,42 +1,42 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraFollow : MonoBehaviour
+namespace Hero
 {
-    [SerializeField] private Transform _following;
-    [SerializeField] private float _rotationAngleX;
-    [SerializeField] private float _distance;
-    [SerializeField] private float _yOffset;
-
-    private void LateUpdate()
+    public class CameraFollow : MonoBehaviour
     {
-        if (_following == null)
-            return;
+        [SerializeField] private Transform _following;
+        [SerializeField] private float _rotationAngleX;
+        [SerializeField] private float _distance;
+        [SerializeField] private float _yOffset;
 
-        var rotation = Quaternion.Euler(_rotationAngleX, 0, 0);
-        var position = rotation * new Vector3(0, 0, -_distance) + FollowingPointPosition();
+        private void LateUpdate()
+        {
+            if (_following == null)
+                return;
 
-        SetNewPostionAndRotation(rotation, position);
-    }
+            var rotation = Quaternion.Euler(_rotationAngleX, 0, 0);
+            var position = rotation * new Vector3(0, 0, -_distance) + FollowingPointPosition();
 
-    private void SetNewPostionAndRotation(Quaternion rotation, Vector3 position)
-    {
-        transform.rotation = rotation;
-        transform.position = position;
-    }
+            SetNewPostionAndRotation(rotation, position);
+        }
 
-    private Vector3 FollowingPointPosition()
-    {
-        Vector3 followingPosition = _following.position;
-        followingPosition.y = _yOffset; 
+        private void SetNewPostionAndRotation(Quaternion rotation, Vector3 position)
+        {
+            transform.rotation = rotation;
+            transform.position = position;
+        }
+
+        private Vector3 FollowingPointPosition()
+        {
+            Vector3 followingPosition = _following.position;
+            followingPosition.y = _yOffset; 
         
-        return followingPosition;
-    }
+            return followingPosition;
+        }
 
-    public void Follow(GameObject objectToFollow)
-    {
-        _following = objectToFollow.transform;
+        public void Follow(GameObject objectToFollow)
+        {
+            _following = objectToFollow.transform;
+        }
     }
 }

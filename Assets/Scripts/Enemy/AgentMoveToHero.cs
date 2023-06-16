@@ -19,6 +19,7 @@ namespace Enemy
 
             if(distanceToHero > Constants.MINIMAL_DISTANSE_TO_PLAYER)
                 _agent.destination = heroPosition;
+
         }
     }
 }

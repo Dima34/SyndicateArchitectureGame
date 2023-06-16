@@ -15,12 +15,11 @@ GameObject:
   - component: {fileID: 1975309247646824047}
   - component: {fileID: 1975309247646824035}
   - component: {fileID: 6895537546930687785}
-  - component: {fileID: 837348037496108970}
-  - component: {fileID: 4366048309440220593}
   - component: {fileID: -8128072558717707326}
   - component: {fileID: 1211272206824011492}
   - component: {fileID: -2770231358642255626}
   - component: {fileID: 1817371865252289779}
+  - component: {fileID: 5358462884616681818}
   m_Layer: 6
   m_Name: Hero
   m_TagString: Untagged
@@ -157,31 +156,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!65 &837348037496108970
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975309247646824040}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &4366048309440220593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1975309247646824040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb1ee115677f4e88a85417f9e3832bea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-8128072558717707326
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,7 +168,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2830beba37844e4f948e9603b5ce3d5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _heroHealth: {fileID: 4366048309440220593}
+  _healthToTrack: {fileID: 5358462884616681818}
+  _heroAttack: {fileID: -2770231358642255626}
   _heroMove: {fileID: 1975309247646824035}
   _deathFX: {fileID: 100006, guid: 2a474af3f4c27be4e9bdce39cfe4315d, type: 3}
 --- !u!95 &1211272206824011492
@@ -231,6 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterController: {fileID: 1975309247646824047}
+  _heroAnimator: {fileID: 1817371865252289779}
 --- !u!114 &1817371865252289779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -241,6 +217,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cacf045d80db40808f9ddd8a20f7a42c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5358462884616681818
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1975309247646824040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1ee115677f4e88a85417f9e3832bea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1975309248098566435

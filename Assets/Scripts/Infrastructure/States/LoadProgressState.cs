@@ -36,12 +36,29 @@ namespace Infrastructure.States
         {
             var playerProgress = new PlayerProgress();
 
-            playerProgress.WorldData.PositionOnLevel.LevelName = Constants.START_LEVEL_NAME ;
-
-            playerProgress.HeroState.MaxHp = Constants.HERO_MAX_HP;
-            playerProgress.HeroState.ResetHP();
+            SetDefaultLevel(playerProgress);
+            SetDefaultHeroStats(playerProgress);
+            SetDefaultHeroState(playerProgress);
             
             return playerProgress;
+        }
+
+        private void SetDefaultHeroState(PlayerProgress playerProgress)
+        {
+            playerProgress.HeroState.MaxHp = Constants.HERO_MAX_HP;
+            playerProgress.HeroState.ResetHP();
+        }
+
+        private void SetDefaultHeroStats(PlayerProgress playerProgress)
+        {
+            playerProgress.HeroStats.Damage = 2f;
+            playerProgress.HeroStats.HitRadius = 2f;
+            playerProgress.HeroStats.HitForwardOffset = 3f;
+        }
+
+        private void SetDefaultLevel(PlayerProgress playerProgress)
+        {
+            playerProgress.WorldData.PositionOnLevel.LevelName = Constants.START_LEVEL_NAME;
         }
 
         private void LoadCurrentLevel(string currentLevel)

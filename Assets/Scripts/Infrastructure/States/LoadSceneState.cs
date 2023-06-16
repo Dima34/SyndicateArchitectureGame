@@ -1,7 +1,8 @@
+using Enemy;
+using Hero;
 using Infrastructure.Factory;
 using Infrastructure.Services.PersistantProgress;
 using Logic;
-using Player;
 using UI;
 using UnityEngine;
 
@@ -9,7 +10,6 @@ namespace Infrastructure.States
 {
     public class LoadSceneState : IPayloadedState<string>
     {
-        private const string INITIAL_POINT_TAG = "InitialPoint";
         private readonly GameStateMachine _gameStateMachine;
         private readonly SceneLoader sceneLoader;
         private LoadingCurtain _loadingCurtain;
@@ -35,10 +35,17 @@ namespace Infrastructure.States
 
         private void OnLevelLoaded()
         {
+            InitSpawners();
             InitGameWorld();
             InformProgressDataReaders();
             
             _gameStateMachine.Enter<GameLoopState>();
+        }
+
+        private void InitSpawners()
+        {
+            foreach (GameObject spawnerObject in GameObject.FindGameObjectsWithTag(Constants.ENEMY_SPAWNER_TAG))
+                _gameFactory.RegisterDataUsers(spawnerObject);
         }
 
         private void InitGameWorld()
@@ -49,7 +56,7 @@ namespace Infrastructure.States
 
         private GameObject CreatePlayer()
         {
-            var initialPoint = GameObject.FindGameObjectWithTag(INITIAL_POINT_TAG);
+            var initialPoint = GameObject.FindGameObjectWithTag(Constants.INITIAL_POINT_TAG);
             var player = _gameFactory.CreateHero(initialPoint.transform.position);
 
             CameraFollow(player);

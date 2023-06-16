@@ -1,44 +1,35 @@
-using System;
+using Enemy;
 using UnityEngine;
 
-namespace Player
+namespace Hero
 {
-    [RequireComponent(typeof(HeroHealth))]
-    public class HeroDeath : MonoBehaviour
+    [RequireComponent(typeof(HeroAttack))]
+    public class HeroDeath : MortalBase
     {
-        [SerializeField] private HeroHealth _heroHealth;
+        [SerializeField] private HeroAttack _heroAttack;
         [SerializeField] private HeroMove _heroMove;
         [SerializeField] private GameObject _deathFX;
+        
         private bool _isDead = false;
+        
+        protected override bool IsDead() =>
+            _healthToTrack.CurrentHP <= 0 && !_isDead;
 
-        private void Start() =>
-            _heroHealth.OnHealthChanged += OnHealthChanged;
-
-        private void OnDestroy() =>
-            _heroHealth.OnHealthChanged -= OnHealthChanged;
-
-        private void OnHealthChanged()
-        {
-            if (_heroHealth.Current <= 0 && !_isDead) 
-                Die();
-        }
-
-        private void Die()
+        protected override void Die()
         {
             Debug.LogWarning("Death...");
-            DisableMovement();
+            DisableAbilities();
             PlayDeathFX();
             _isDead = true;
         }
 
-        private void PlayDeathFX()
-        {
+        private void PlayDeathFX() =>
             Instantiate(_deathFX, transform.position, Quaternion.identity);
-        }
 
-        private void DisableMovement()
+        private void DisableAbilities()
         {
             _heroMove.enabled = false;
+            _heroAttack.enabled = false;
         }
     }
 }
