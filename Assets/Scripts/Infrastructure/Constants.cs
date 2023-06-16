@@ -22,5 +22,6 @@ namespace Infrastructure
         public const float DEAD_BODY_EXIS_TIME = 3f;
         public const string INITIAL_POINT_TAG = "InitialPoint";
         public const string ENEMY_SPAWNER_TAG = "EnemySpawner";
+        public const string HERO_TAG = "Player";
     }
 }

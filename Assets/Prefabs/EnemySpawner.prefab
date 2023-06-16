@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2b9946c619248fb821a904f8d5e9fcf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyTypeId: 0
+  _monsterTypeId: 0
   _slain: 0
 --- !u!114 &1467686222942747323
 MonoBehaviour:
@@ -59,4 +59,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba41454871a4e3d896059c23cefe402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: _74a21200-4065-4fa8-b1fd-170ab0ed32ca
+  Id: _886935c3-8136-42c8-a394-2a9425291bae
