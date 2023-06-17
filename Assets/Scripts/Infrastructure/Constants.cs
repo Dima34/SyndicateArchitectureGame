@@ -18,10 +18,13 @@ namespace Infrastructure
         // Layers name
         public const string HIITBLE_LAYERNAME = "Hittable";
         public const string PLAYER_LAYERNAME = "Player";
+        
+        
         public const int HITOBJECTS_PER_HIT = 3;
         public const float DEAD_BODY_EXIS_TIME = 3f;
         public const string INITIAL_POINT_TAG = "InitialPoint";
         public const string ENEMY_SPAWNER_TAG = "EnemySpawner";
-        public const string HERO_TAG = "Player";
+        public const string LOOT_RESOURCE_PATH = "Loot/Loot";
+        public const string FLOOR_LAYER =  "Floor";
     }
 }

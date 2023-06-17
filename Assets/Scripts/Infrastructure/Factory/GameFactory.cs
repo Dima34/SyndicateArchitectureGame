@@ -76,6 +76,7 @@ namespace Infrastructure.Factory
             SetupMonsterHealth(monster, _monsterData);
             SetupMonsterMovement(monster, _monsterData, HeroGameObject.transform);
             SetupMonsterAttack(monster, _monsterData);
+            SetupMonsterLootSpawner(monster);
             
             return monster;
         }
@@ -105,6 +106,14 @@ namespace Infrastructure.Factory
             monsterAttack.EffectiveDistance = monsterData.EffectiveDistance;
             monsterAttack.AttackCooldown = monsterData.AttackCooldown;
         }
+
+        private void SetupMonsterLootSpawner(GameObject monster)
+        {
+            monster.GetComponentInChildren<LootSpawner>().Construct(this);
+        }
+
+        public GameObject CreateLoot() =>
+            InstantiateResourceAndRegisterDataUsers(Constants.LOOT_RESOURCE_PATH);
 
         private void RegisterDataReaders(GameObject gameObject) => 
             FindComponentsAndAddToList<ISavedProgressReader>(gameObject, ProgressReaders);

@@ -490,7 +490,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4106818944526911769, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -5.37
+      value: -11.26
       objectReference: {fileID: 0}
     - target: {fileID: 4106818944526911769, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_LocalPosition.y
@@ -498,7 +498,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4106818944526911769, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.579999
+      value: 4.96
       objectReference: {fileID: 0}
     - target: {fileID: 4106818944526911769, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_LocalRotation.w
@@ -531,6 +531,10 @@ PrefabInstance:
     - target: {fileID: 6509847353648448444, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_Name
       value: EnemySpawner (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6850911166241770837, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
+      propertyPath: _monsterTypeId
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}

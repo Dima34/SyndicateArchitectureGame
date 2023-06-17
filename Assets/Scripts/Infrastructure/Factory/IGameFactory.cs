@@ -17,5 +17,6 @@ namespace Infrastructure.Factory
         void CleanupProgressMembersList();
         public void RegisterDataUsers(GameObject gameObject);
         GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent);
+        GameObject CreateLoot();
     }
 }

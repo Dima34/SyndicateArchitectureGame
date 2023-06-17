@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using Infrastructure;
 using Logic;
 using UnityEngine;
 
@@ -8,7 +6,7 @@ namespace Enemy
 {
     public class Aggro : MonoBehaviour
     {
-        [SerializeField] private TriggerZone triggerZone;
+        [SerializeField] private TriggerZone _triggerZone;
         [SerializeField] private Follow _follow;
         [SerializeField] private float _cooldown = 2f;
         
@@ -16,8 +14,8 @@ namespace Enemy
 
         private void Start()
         {
-            triggerZone.ZoneEnter += ZoneEnter;
-            triggerZone.ZoneExit += ZoneExit;
+            _triggerZone.ZoneEnter += ZoneEnter;
+            _triggerZone.ZoneExit += ZoneExit;
 
             SwitchFollowOFF();
         }

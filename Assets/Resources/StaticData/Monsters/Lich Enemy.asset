@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _monsterTypeId: 0
   _hp: 20
-  _damage: 15
+  _damage: 7
   _EffectiveDistance: 1
   _cleverage: 1
   _speed: 2
-  _prefab: {fileID: 8027734339460696887, guid: b4a3b31ec9ba946dd8267de101db388a, type: 3}
+  _prefab: {fileID: 239064198452406056, guid: dfc8cf67dbc6c4d2e999d983e37e546d, type: 3}
   _attackCooldown: 0
