@@ -14,9 +14,12 @@ namespace StaticData
         [Range(0.5f, 1)] [SerializeField] private float _cleverage;
 
         [Range(0.5f, 10)] [SerializeField] private float _speed;
+        [Range(0.1f, 10)] [SerializeField] private float _attackCooldown;
 
+        [Range(1f, 40f)] [SerializeField] private int _minLoot;
+        [Range(1f, 40f)] [SerializeField] private int _maxLoot;
+        
         [SerializeField] private GameObject _prefab;
-        [SerializeField] private float _attackCooldown;
 
         public MonsterTypeId TypeId
         {
@@ -64,6 +67,18 @@ namespace StaticData
         {
             get => _attackCooldown;
             set => _attackCooldown = value;
+        }
+
+        public int MinLoot
+        {
+            get => _minLoot;
+            set => _minLoot = value;
+        }
+
+        public int MaxLoot
+        {
+            get => _maxLoot;
+            set => _maxLoot = value;
         }
     }
 }

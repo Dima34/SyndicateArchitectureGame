@@ -1,29 +1,31 @@
 using Infrastructure.Data;
-using Infrastructure.Factory;
 using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.ProgressDescription;
 using UnityEngine;
 
 namespace Infrastructure.Services.SaveLoad
 {
     class SaveLoadService : ISaveLoadService
     {
-        private IGameFactory _gameFactory;
         private IPersistantProgressService _progressService;
+        private IProgressDescriptionService _progressDescriptionService;
 
-        public SaveLoadService(IGameFactory gameFactory, IPersistantProgressService progressService)
+        public SaveLoadService(IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService)
         {
             _progressService = progressService;
-            _gameFactory = gameFactory;
+            _progressDescriptionService = progressDescriptionService;
         }
 
         public void SaveProgress()
         {
-            foreach (var progressWriter in _gameFactory.ProgressWriters)
-                progressWriter.UpdateProgress(_progressService.Progress);
-
-            var jsonedData = _progressService.Progress.ToJson();
+            _progressDescriptionService.UpdateProgress();
+            
+            var jsonedData = GetProgress().ToJson();
             PlayerPrefs.SetString(Constants.PROGRESS_KEY, jsonedData);
         }
+
+        private PlayerProgress GetProgress() =>
+            _progressService.Progress;
 
         public PlayerProgress LoadProgress()
         {

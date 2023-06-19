@@ -1,4 +1,3 @@
-using System;
 using Infrastructure.Services;
 using Infrastructure.Services.SaveLoad;
 using UnityEngine;
@@ -8,17 +7,17 @@ namespace Logic
     [RequireComponent(typeof(BoxCollider))]
     public class SaveTrigger : MonoBehaviour
     {
-        private ISaveLoadService _saveloadSecrvice;
+        private ISaveLoadService _saveloadService;
         [SerializeField] private BoxCollider _collider;
 
         private void Awake()
         {
-            _saveloadSecrvice = AllServices.Container.GetSingle<ISaveLoadService>();
+            _saveloadService = AllServices.Container.GetSingle<ISaveLoadService>();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            _saveloadSecrvice.SaveProgress();
+            _saveloadService.SaveProgress();
             Debug.LogWarning("Progress saved!");
             gameObject.SetActive(false);
         }

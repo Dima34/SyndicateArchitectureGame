@@ -70,7 +70,6 @@ GameObject:
   - component: {fileID: 5989776105493615641}
   - component: {fileID: 1847701409729947506}
   - component: {fileID: 3273967467989090488}
-  - component: {fileID: 7234699183018779098}
   - component: {fileID: 4241823114499802437}
   - component: {fileID: 5872113264990502499}
   - component: {fileID: 5605844766215730572}
@@ -163,22 +162,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &7234699183018779098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1321807395121730241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540eaedd2e5e4fe2b53771919e9c26c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _healthToTrack: {fileID: 4142667444927701402}
-  _enemyAnimator: {fileID: 1847701409729947506}
-  _deathFX: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 3}
-  _agent: {fileID: 3273967467989090488}
 --- !u!114 &4241823114499802437
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,6 +205,7 @@ MonoBehaviour:
   _enemyAnimator: {fileID: 1847701409729947506}
   _deathFX: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 3}
   _agent: {fileID: 3273967467989090488}
+  _animateAlongAgent: {fileID: 6134964930219785675}
 --- !u!114 &1943765259369970734
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,7 +348,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 420ea1ed00304896bfe3e77f8e6d4a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyDeath: {fileID: 7234699183018779098}
+  _enemyDeath: {fileID: 5605844766215730572}
 --- !u!1 &4364083350837063911
 GameObject:
   m_ObjectHideFlags: 0

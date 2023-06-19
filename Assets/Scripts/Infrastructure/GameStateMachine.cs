@@ -4,6 +4,7 @@ using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.SaveLoad;
 using Infrastructure.States;
 using Logic;
@@ -24,6 +25,7 @@ namespace Infrastructure
                     sceneLoder, 
                     loadingCurtain, 
                     services.GetSingle<IGameFactory>(),
+                    services.GetSingle<IProgressDescriptionService>(),
                     services.GetSingle<IPersistantProgressService>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
                     services.GetSingle<IPersistantProgressService>(),

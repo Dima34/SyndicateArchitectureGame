@@ -13,10 +13,12 @@ MonoBehaviour:
   m_Name: Lich Enemy
   m_EditorClassIdentifier: 
   _monsterTypeId: 0
-  _hp: 20
+  _hp: 2
   _damage: 7
   _EffectiveDistance: 1
   _cleverage: 1
   _speed: 2
-  _prefab: {fileID: 239064198452406056, guid: dfc8cf67dbc6c4d2e999d983e37e546d, type: 3}
   _attackCooldown: 0
+  _minLoot: 1
+  _maxLoot: 7
+  _prefab: {fileID: 239064198452406056, guid: dfc8cf67dbc6c4d2e999d983e37e546d, type: 3}

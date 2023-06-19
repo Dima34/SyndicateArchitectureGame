@@ -1,5 +1,7 @@
 using Infrastructure;
+using Infrastructure.Data;
 using Infrastructure.Factory;
+using Infrastructure.Services.RandomService;
 using UnityEngine;
 
 namespace Enemy
@@ -9,23 +11,31 @@ namespace Enemy
         [SerializeField] private EnemyDeath _enemyDeath;
         
         private IGameFactory _factory;
+        private IRandomService _randomService;
         private int _floorLayerMask;
+        private int _minLoot;
+        private int _maxLoot;
+
         private const float MAX_FLOOR_HIT_DISTANCE = 3f;
 
         private void Start()
         {
             _floorLayerMask = 1 << LayerMask.GetMask(Constants.FLOOR_LAYER); 
-            
             _enemyDeath.Happend += SpawnLoot;
         }
 
-        public void Construct(IGameFactory factory) =>
+        public void Construct(IGameFactory factory, IRandomService randomService)
+        {
             _factory = factory;
+            _randomService = randomService;
+        }
 
         private void SpawnLoot()
         {
-            var lootGameObject = _factory.CreateLoot();
+            LootPiece lootGameObject = _factory.CreateLoot();
             lootGameObject.transform.position = GetSpawnPosition();
+
+            lootGameObject.Initialize(GenerateLoot());
         }
 
         private Vector3 GetSpawnPosition()
@@ -35,10 +45,22 @@ namespace Enemy
                 : transform.position;
         }
 
+        private Loot GenerateLoot() =>
+            new Loot()
+            {
+                Value = _randomService.Next(_minLoot, _maxLoot)
+            };
+
         private bool HitFloor(out RaycastHit hit)
         {
             var ray = new Ray(transform.position, -transform.up);
             return Physics.Raycast(ray, out hit, MAX_FLOOR_HIT_DISTANCE, _floorLayerMask);
+        }
+
+        public void SetLoot(int min, int max)
+        {
+            _minLoot = min;
+            _maxLoot = max;
         }
     }
 }

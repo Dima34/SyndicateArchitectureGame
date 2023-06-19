@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
 using Enemy;
 using Hero;
 using Infrastructure.AssetManagement;
-using Infrastructure.Services;
+using Infrastructure.Data;
 using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.ProgressDescription;
+using Infrastructure.Services.RandomService;
 using Logic;
 using Services.Inputs;
 using StaticData;
@@ -20,15 +21,22 @@ namespace Infrastructure.Factory
         private readonly IAssetProvider _assetProvider;
         private GameObject _heroGameObject;
         private IStaticDataService _staticData;
+        private IInputService _inputService;
+        private IRandomService _randomService;
+        private readonly IPersistantProgressService _persistantProgressService;
+        private IProgressDescriptionService _progressDescriptionService;
 
-        public List<ISavedProgressReader> ProgressReaders { get; } = new List<ISavedProgressReader>();
-        public List<ISavedProgressWriter> ProgressWriters { get; } = new List<ISavedProgressWriter>();
         public GameObject HeroGameObject => _heroGameObject;
 
-        public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData)
+        public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData, IInputService inputService,
+            IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService)
         {
             _assetProvider = assetProvider;
             _staticData = staticData;
+            _inputService = inputService;
+            _randomService = randomService;
+            _persistantProgressService = progressService;
+            _progressDescriptionService = progressDescriptionService;
         }
 
         public GameObject CreateHero(Vector3 instantiatePosition) { 
@@ -42,31 +50,20 @@ namespace Infrastructure.Factory
         private void SetupHeroAttack()
         {
             HeroAttack heroAttack = _heroGameObject.GetComponent<HeroAttack>();
-            heroAttack.Construct(AllServices.Container.GetSingle<IInputService>());
+            heroAttack.Construct(_inputService);
         }
 
-        public GameObject CreateHUD() =>
-            InstantiateResourceAndRegisterDataUsers(AssetPath.HUD_PATH);
-
-        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath, Vector3 at)
+        public GameObject CreateHUD()
         {
-            var gameObject = _assetProvider.InstantiateResourse(assetPath, at);
-            RegisterDataUsers(gameObject);
-            return gameObject;
+            var hud = InstantiateResourceAndRegisterDataUsers(AssetPath.HUD_PATH);
+
+            ConstructLootCounter(hud);
+            
+            return hud;
         }
 
-        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath)
-        {
-            var gameObject = _assetProvider.InstantiateResourse(assetPath);
-            RegisterDataUsers(gameObject);
-            return gameObject;
-        }
-
-        public void RegisterDataUsers(GameObject gameObject)
-        {
-            RegisterDataReaders(gameObject);
-            RegisterDataWriters(gameObject);
-        }
+        private void ConstructLootCounter(GameObject hud) =>
+            hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.WorldData);
 
         public GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent)
         {
@@ -76,7 +73,7 @@ namespace Infrastructure.Factory
             SetupMonsterHealth(monster, _monsterData);
             SetupMonsterMovement(monster, _monsterData, HeroGameObject.transform);
             SetupMonsterAttack(monster, _monsterData);
-            SetupMonsterLootSpawner(monster);
+            SetupMonsterLoot(monster, _monsterData);
             
             return monster;
         }
@@ -107,31 +104,66 @@ namespace Infrastructure.Factory
             monsterAttack.AttackCooldown = monsterData.AttackCooldown;
         }
 
-        private void SetupMonsterLootSpawner(GameObject monster)
+        private void SetupMonsterLoot(GameObject monster, MonsterStaticData monsterData)
         {
-            monster.GetComponentInChildren<LootSpawner>().Construct(this);
+            LootSpawner lootSpawner = monster.GetComponentInChildren<LootSpawner>();
+            lootSpawner.SetLoot(monsterData.MinLoot, monsterData.MaxLoot);
+            lootSpawner.Construct(this, _randomService);
         }
 
-        public GameObject CreateLoot() =>
-            InstantiateResourceAndRegisterDataUsers(Constants.LOOT_RESOURCE_PATH);
+        public LootPiece CreateLoot()
+        {
+            var lootPiece = InstantiateResourceAndRegisterDataUsers(Constants.LOOT_RESOURCE_PATH)
+                .GetComponent<LootPiece>();
+            
+            lootPiece.Construct(this, _persistantProgressService.Progress.WorldData);
+            
+            return lootPiece;
+        }
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath, Vector3 at)
+        {
+            var gameObject = _assetProvider.InstantiateResourse(assetPath, at);
+            RegisterDataUsers(gameObject);
+            return gameObject;
+        }
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath)
+        {
+            var gameObject = _assetProvider.InstantiateResourse(assetPath);
+            RegisterDataUsers(gameObject);
+            return gameObject;
+        }
+
+        public void RegisterDataUsers(GameObject gameObject)
+        {
+            RegisterDataReaders(gameObject);
+            RegisterDataWriters(gameObject);
+        }
+        
+        public void UnRegisterDataUsers(GameObject gameObject)
+        {
+            UnRegisterDataReaders(gameObject);
+            UnRegisterDataWriters(gameObject);
+        }
 
         private void RegisterDataReaders(GameObject gameObject) => 
-            FindComponentsAndAddToList<ISavedProgressReader>(gameObject, ProgressReaders);
+            FindComponentsAndExecuteAddCommand<ISavedProgressReader>(gameObject, _progressDescriptionService.RegisterDataReader);
 
         private void RegisterDataWriters(GameObject gameObject) => 
-            FindComponentsAndAddToList<ISavedProgressWriter>(gameObject, ProgressWriters);
+            FindComponentsAndExecuteAddCommand<ISavedProgressWriter>(gameObject, _progressDescriptionService.RegisterDataWriter);
+        
+        private void UnRegisterDataReaders(GameObject gameObject) => 
+            FindComponentsAndExecuteAddCommand<ISavedProgressReader>(gameObject, _progressDescriptionService.UnRegisterDataReader);
 
-        private void FindComponentsAndAddToList<MemberType>(GameObject gameObject,List<MemberType> membersList)
-        {
-            var memebers = gameObject.GetComponentsInChildren<MemberType>();
-            for (int i = 0; i < memebers.Length; i++)
-                membersList.Add(memebers[i]);
-        }
+        private void UnRegisterDataWriters(GameObject gameObject) => 
+            FindComponentsAndExecuteAddCommand<ISavedProgressWriter>(gameObject, _progressDescriptionService.UnRegisterDataWriter);
 
-        public void CleanupProgressMembersList()
+        private void FindComponentsAndExecuteAddCommand<MemberType>(GameObject gameObject,Action<MemberType> Add)
         {
-            ProgressReaders.Clear();
-            ProgressWriters.Clear();
+            var members = gameObject.GetComponentsInChildren<MemberType>();
+            for (int i = 0; i < members.Length; i++)
+                Add(members[i]);
         }
     }
 }

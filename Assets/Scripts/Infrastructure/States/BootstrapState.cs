@@ -2,6 +2,8 @@ using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.ProgressDescription;
+using Infrastructure.Services.RandomService;
 using Infrastructure.Services.SaveLoad;
 using Services.Inputs;
 using StaticData;
@@ -28,14 +30,26 @@ namespace Infrastructure.States
         {
             RegisterStaticDataService();
             
-            _services.RegisterSingle<IAssetProvider>(new AssetProvider());
-            _services.RegisterSingle<IGameFactory>(new GameFactory(_services.GetSingle<IAssetProvider>(), _services.GetSingle<IStaticDataService>()));
-            _services.RegisterSingle<IInputService>(GetInputService());
             _services.RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
-            _services.RegisterSingle<ISaveLoadService>(new SaveLoadService(
-                _services.GetSingle<IGameFactory>(), 
-                    _services.GetSingle<IPersistantProgressService>()));
+            _services.RegisterSingle<IProgressDescriptionService>(new ProgressDescriptionService(_services.GetSingle<IPersistantProgressService>()));
+            _services.RegisterSingle<ISaveLoadService>(new SaveLoadService(_services.GetSingle<IPersistantProgressService>(), _services.GetSingle<IProgressDescriptionService>()));
+            _services.RegisterSingle<IAssetProvider>(new AssetProvider());
+            _services.RegisterSingle<IInputService>(GetInputService());
+            _services.RegisterSingle<IRandomService>(new RandomService());
+            
+            RegisterGameFactory();
+        }
 
+        private void RegisterGameFactory()
+        {
+            _services.RegisterSingle<IGameFactory>(new GameFactory(
+                _services.GetSingle<IAssetProvider>(), 
+                _services.GetSingle<IStaticDataService>(),
+                _services.GetSingle<IInputService>(),
+                _services.GetSingle<IRandomService>(),
+                _services.GetSingle<IPersistantProgressService>(),
+                _services.GetSingle<IProgressDescriptionService>()
+                ));
         }
 
         private void RegisterStaticDataService()

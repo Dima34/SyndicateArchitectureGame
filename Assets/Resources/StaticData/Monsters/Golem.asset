@@ -18,5 +18,7 @@ MonoBehaviour:
   _EffectiveDistance: 1
   _cleverage: 1
   _speed: 0.5
-  _prefab: {fileID: 7315157797520833571, guid: 74753670c69804e20903a8d25401c206, type: 3}
   _attackCooldown: 2
+  _minLoot: 7
+  _maxLoot: 10
+  _prefab: {fileID: 7315157797520833571, guid: 74753670c69804e20903a8d25401c206, type: 3}

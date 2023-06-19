@@ -1,7 +1,10 @@
+using System.Linq;
 using Enemy;
 using Hero;
+using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services.PersistantProgress;
+using Infrastructure.Services.ProgressDescription;
 using Logic;
 using UI;
 using UnityEngine;
@@ -14,12 +17,15 @@ namespace Infrastructure.States
         private readonly SceneLoader sceneLoader;
         private LoadingCurtain _loadingCurtain;
         private readonly IGameFactory _gameFactory;
-        private IPersistantProgressService _persistantProgressService;
+        private IProgressDescriptionService _progressDescriptionService;
+        private IPersistantProgressService _progressService;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IPersistantProgressService persistantProgressService)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService,
+            IPersistantProgressService progressService)
         {
-            _persistantProgressService = persistantProgressService;
+            _progressService = progressService;
+            _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
             this.sceneLoader = sceneLoader;
@@ -29,29 +35,31 @@ namespace Infrastructure.States
         public void Enter(string payload)
         {
             _loadingCurtain.Show();
-            _gameFactory.CleanupProgressMembersList();
+            _progressDescriptionService.CleanupProgressMembersList();
             sceneLoader.Load(payload, OnLevelLoaded);
         }
 
         private void OnLevelLoaded()
         {
-            InitSpawners();
             InitGameWorld();
-            InformProgressDataReaders();
-            
+
+            _progressDescriptionService.InformProgressDataReaders();
+
             _gameStateMachine.Enter<GameLoopState>();
+        }
+
+        private void InitGameWorld()
+        {
+            InitSpawners();
+            CreateUnearnedLoot();
+            GameObject hero = CreatePlayer();
+            CreateHUD(hero);
         }
 
         private void InitSpawners()
         {
             foreach (GameObject spawnerObject in GameObject.FindGameObjectsWithTag(Constants.ENEMY_SPAWNER_TAG))
                 _gameFactory.RegisterDataUsers(spawnerObject);
-        }
-
-        private void InitGameWorld()
-        {
-            GameObject hero = CreatePlayer();
-            CreateHUD(hero);
         }
 
         private GameObject CreatePlayer()
@@ -64,6 +72,11 @@ namespace Infrastructure.States
             return player;
         }
 
+        private static void CameraFollow(GameObject player) =>
+            Camera.main
+                .GetComponent<CameraFollow>()
+                .Follow(player);
+
         private void CreateHUD(GameObject hero)
         {
             GameObject hud = _gameFactory.CreateHUD();
@@ -72,15 +85,19 @@ namespace Infrastructure.States
             hud.GetComponentInChildren<ActorUI>().Construct(heroHealth);
         }
 
-        private static void CameraFollow(GameObject player) =>
-            Camera.main
-                .GetComponent<CameraFollow>()
-                .Follow(player);
-
-        private void InformProgressDataReaders()
+        private void CreateUnearnedLoot()
         {
-            foreach (var savedProgressReader in _gameFactory.ProgressReaders)
-                savedProgressReader.LoadProgress(_persistantProgressService.Progress);
+            WorldData worldData = _progressService.Progress.WorldData;
+            var unearnedLootDict =
+                worldData.UnEarnedLootpieces.LootPieces;
+
+            foreach (var lootItem in unearnedLootDict)
+            {
+                LootPiece loot = _gameFactory.CreateLoot(); 
+                loot.Initialize(lootItem.Loot);
+
+                loot.transform.position = lootItem.Position.AsUnityVector();
+            }
         }
 
         public void Exit() =>

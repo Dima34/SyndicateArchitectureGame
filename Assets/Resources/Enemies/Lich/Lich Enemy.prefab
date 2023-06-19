@@ -819,7 +819,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1321807395121730241, guid: 450fe7818bf7f4bcdb86bfd9a5cd256e, type: 3}
       propertyPath: m_Name
-      value: Lich Enemy New
+      value: Lich Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2129155375927191913, guid: 450fe7818bf7f4bcdb86bfd9a5cd256e, type: 3}
+      propertyPath: m_RootOrder
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4061034645894147009, guid: 450fe7818bf7f4bcdb86bfd9a5cd256e, type: 3}
       propertyPath: m_RootOrder
