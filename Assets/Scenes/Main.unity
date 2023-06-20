@@ -180,7 +180,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6509847353648448444, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_Name
-      value: EnemySpawner (3)
+      value: SpawnMarker
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
@@ -251,7 +251,7 @@ GameObject:
   m_Component:
   - component: {fileID: 496255994}
   m_Layer: 0
-  m_Name: EnemySpawners
+  m_Name: EnemySpawnMarkers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -530,11 +530,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6509847353648448444, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_Name
-      value: EnemySpawner (2)
+      value: SpawnMarker
       objectReference: {fileID: 0}
     - target: {fileID: 6850911166241770837, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: _monsterTypeId
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7881401725844712738, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
+      propertyPath: _monsterTypeId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8314557073230115744, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
+      propertyPath: Id
+      value: Main_be3b377f-a852-4754-ba62-c7b22648128f
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
@@ -772,7 +780,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6509847353648448444, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_Name
-      value: EnemySpawner (1)
+      value: SpawnMarker
+      objectReference: {fileID: 0}
+    - target: {fileID: 8314557073230115744, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
+      propertyPath: Id
+      value: Main_806474be-d8a3-466d-be18-d423be0b82e5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
@@ -5474,7 +5486,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6509847353648448444, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
       propertyPath: m_Name
-      value: EnemySpawner
+      value: SpawnMarker
+      objectReference: {fileID: 0}
+    - target: {fileID: 8314557073230115744, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}
+      propertyPath: Id
+      value: Main_c9f3945c-4893-418d-9622-36a272bc954e
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a2d9054f2bd2488dac96871bbabaf82, type: 3}

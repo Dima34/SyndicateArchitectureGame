@@ -6,5 +6,6 @@ namespace StaticData
     {
         void LoadMonsters();
         MonsterStaticData ForMonster(MonsterTypeId monsterTypeId);
+        LevelStaticData ForLevel(string sceneKey);
     }
 }

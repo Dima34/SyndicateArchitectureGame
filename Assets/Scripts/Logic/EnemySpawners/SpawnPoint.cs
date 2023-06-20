@@ -1,15 +1,13 @@
 using Enemy;
 using Infrastructure.Data;
 using Infrastructure.Factory;
-using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using StaticData;
 using UnityEngine;
 
-namespace Logic
+namespace Logic.EnemySpawners
 {
-    [RequireComponent(typeof(UniqueId))]
-    public class EnemySpawner : MonoBehaviour, ISavedProgress
+    public class SpawnPoint : MonoBehaviour, ISavedProgress
     {
         [SerializeField] private MonsterTypeId _monsterTypeId;
         // SerializeField for visual working condition test
@@ -17,15 +15,15 @@ namespace Logic
 
         private string _id;
         private IGameFactory _gameFactory;
-        
-        private void Awake()
-        {
-            AssingGameFactory();
-            _id = GetComponent<UniqueId>().Id;
-        }
 
-        private void AssingGameFactory() =>
-            _gameFactory = AllServices.Container.GetSingle<IGameFactory>();
+        public void Construct(IGameFactory factory) =>
+            _gameFactory = factory;
+
+        public void Initialize(string id, MonsterTypeId monsterTypeId)
+        {
+            _id = id;
+            _monsterTypeId = monsterTypeId;
+        }
 
         public void LoadProgress(PlayerProgress progress)
         {
@@ -46,7 +44,7 @@ namespace Logic
 
         public void UpdateProgress(PlayerProgress progress)
         {
-            if(_slain)
+            if (_slain)
                 progress.KillData.ClearedSpawners.Add(_id);
         }
     }

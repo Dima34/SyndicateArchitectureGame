@@ -9,9 +9,8 @@ namespace Infrastructure.Factory
     {
         GameObject CreateHero(Vector3 instantiatePosition);
         GameObject CreateHUD();
-        public void RegisterDataUsers(GameObject gameObject);
         GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent);
         LootPiece CreateLoot();
-        void UnRegisterDataUsers(GameObject gameObject);
+        void CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId);
     }
 }

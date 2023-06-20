@@ -8,6 +8,7 @@ using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.Random;
 using Infrastructure.States;
 using Logic;
+using Logic.EnemySpawners;
 using Services.Inputs;
 using StaticData;
 using UI;
@@ -116,7 +117,7 @@ namespace Infrastructure.Factory
 
         public LootPiece CreateLoot()
         {
-            var lootPiece = InstantiateResourceAndRegisterDataUsers(Constants.LOOT_RESOURCE_PATH)
+            var lootPiece = InstantiateResourceAndRegisterDataUsers(AssetPath.LOOT_RESOURCE_PATH)
                 .GetComponent<LootPiece>();
             
             lootPiece.Construct(_lootService, _persistantProgressService.Progress.WorldData);
@@ -124,6 +125,15 @@ namespace Infrastructure.Factory
             return lootPiece;
         }
 
+        public void CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId)
+        {
+            SpawnPoint spawnPoint = InstantiateResourceAndRegisterDataUsers(AssetPath.SPAWNER, at)
+                .GetComponent<SpawnPoint>();
+            
+            spawnPoint.Construct(this);
+            spawnPoint.Initialize(spawnerId, monsterTypeId);
+        }
+        
         private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath, Vector3 at)
         {
             var gameObject = _assetProvider.InstantiateResourse(assetPath, at);
@@ -138,16 +148,10 @@ namespace Infrastructure.Factory
             return gameObject;
         }
 
-        public void RegisterDataUsers(GameObject gameObject)
+        private void RegisterDataUsers(GameObject gameObject)
         {
             RegisterDataReaders(gameObject);
             RegisterDataWriters(gameObject);
-        }
-        
-        public void UnRegisterDataUsers(GameObject gameObject)
-        {
-            UnRegisterDataReaders(gameObject);
-            UnRegisterDataWriters(gameObject);
         }
 
         private void RegisterDataReaders(GameObject gameObject) => 
@@ -155,12 +159,6 @@ namespace Infrastructure.Factory
 
         private void RegisterDataWriters(GameObject gameObject) => 
             FindComponentsAndExecuteAddCommand<ISavedProgressWriter>(gameObject, _progressDescriptionService.RegisterDataWriter);
-        
-        private void UnRegisterDataReaders(GameObject gameObject) => 
-            FindComponentsAndExecuteAddCommand<ISavedProgressReader>(gameObject, _progressDescriptionService.UnRegisterDataReader);
-
-        private void UnRegisterDataWriters(GameObject gameObject) => 
-            FindComponentsAndExecuteAddCommand<ISavedProgressWriter>(gameObject, _progressDescriptionService.UnRegisterDataWriter);
 
         private void FindComponentsAndExecuteAddCommand<MemberType>(GameObject gameObject,Action<MemberType> Add)
         {

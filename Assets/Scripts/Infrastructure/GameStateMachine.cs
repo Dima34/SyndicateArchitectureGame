@@ -8,6 +8,7 @@ using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.SaveLoad;
 using Infrastructure.States;
 using Logic;
+using StaticData;
 
 namespace Infrastructure
 {
@@ -26,7 +27,8 @@ namespace Infrastructure
                     loadingCurtain, 
                     services.GetSingle<IGameFactory>(),
                     services.GetSingle<IProgressDescriptionService>(),
-                    services.GetSingle<IUnearnedLootService>()),
+                    services.GetSingle<IUnearnedLootService>(),
+                    services.GetSingle<IStaticDataService>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
                     services.GetSingle<IPersistantProgressService>(),
                     services.GetSingle<ISaveLoadService>()),

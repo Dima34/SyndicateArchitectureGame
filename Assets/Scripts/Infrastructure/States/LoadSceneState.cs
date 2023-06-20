@@ -6,8 +6,10 @@ using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services.ProgressDescription;
 using Logic;
+using StaticData;
 using UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Infrastructure.States
 {
@@ -19,11 +21,13 @@ namespace Infrastructure.States
         private readonly IGameFactory _gameFactory;
         private IProgressDescriptionService _progressDescriptionService;
         private IUnearnedLootService _unearnedLootService;
+        private IStaticDataService _staticData;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService, IStaticDataService staticData)
         {
             _unearnedLootService = unearnedLootService;
+            _staticData = staticData;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -64,8 +68,11 @@ namespace Infrastructure.States
 
         private void InitSpawners()
         {
-            foreach (GameObject spawnerObject in GameObject.FindGameObjectsWithTag(Constants.ENEMY_SPAWNER_TAG))
-                _gameFactory.RegisterDataUsers(spawnerObject);
+            string sceneKey = SceneManager.GetActiveScene().name;
+            LevelStaticData levelData = _staticData.ForLevel(sceneKey);
+            
+            foreach (var spawnerData in levelData.EnemySpawners)
+                _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
         }
 
         private GameObject CreatePlayer()

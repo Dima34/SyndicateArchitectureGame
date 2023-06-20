@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4106818944526911769}
-  - component: {fileID: 6850911166241770837}
-  - component: {fileID: 1467686222942747323}
+  - component: {fileID: 7881401725844712738}
+  - component: {fileID: 8314557073230115744}
   m_Layer: 0
-  m_Name: EnemySpawner
-  m_TagString: EnemySpawner
+  m_Name: SpawnMarker
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6850911166241770837
+--- !u!114 &7881401725844712738
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,12 +42,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6509847353648448444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2b9946c619248fb821a904f8d5e9fcf, type: 3}
+  m_Script: {fileID: 11500000, guid: 8da402f6ba9743a7b81d87735aa136cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _monsterTypeId: 0
-  _slain: 0
---- !u!114 &1467686222942747323
+--- !u!114 &8314557073230115744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,4 +58,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eba41454871a4e3d896059c23cefe402, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Id: _07ff9cf1-2b94-48f5-abe1-b64c0eb629c6
+  Id: SpawnMarker_327557f0-b3f1-4185-aa43-686184a27026
