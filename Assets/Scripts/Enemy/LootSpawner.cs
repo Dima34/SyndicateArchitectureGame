@@ -1,7 +1,7 @@
 using Infrastructure;
 using Infrastructure.Data;
 using Infrastructure.Factory;
-using Infrastructure.Services.RandomService;
+using Infrastructure.Services.Random;
 using UnityEngine;
 
 namespace Enemy
@@ -33,9 +33,7 @@ namespace Enemy
         private void SpawnLoot()
         {
             LootPiece lootGameObject = _factory.CreateLoot();
-            lootGameObject.transform.position = GetSpawnPosition();
-
-            lootGameObject.Initialize(GenerateLoot());
+            lootGameObject.Initialize(GenerateLoot(), GetSpawnPosition());
         }
 
         private Vector3 GetSpawnPosition()

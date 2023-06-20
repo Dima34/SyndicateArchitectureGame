@@ -12,7 +12,8 @@ namespace Enemy
         [SerializeField] private GameObject _deathFX;
         [SerializeField] private NavMeshAgent _agent;
         [SerializeField] private AnimateAlongAgent _animateAlongAgent;
-        
+        [SerializeField] private AgentMoveToHero _agentMoveToHero;
+
 
         protected override bool IsDead() =>
             _healthToTrack.CurrentHP <= 0;
@@ -21,21 +22,19 @@ namespace Enemy
         {
             _enemyAnimator.PlayDeath();
             SpawnDeathVFX();
-            DisableAgent();
-            DisableAnimation();
+            DisableMoving();
             StartCoroutine(BodyCollector());
         }
 
-        private void DisableAgent() =>
-            _agent.enabled = false;
-
-        private void SpawnDeathVFX()
+        private void DisableMoving()
         {
-            Instantiate(_deathFX, transform.position, Quaternion.identity);
+            _agent.enabled = false;
+            _animateAlongAgent.enabled = false;
+            _agentMoveToHero.enabled = false;
         }
 
-        private void DisableAnimation() =>
-            _animateAlongAgent.enabled = false;
+        private void SpawnDeathVFX() =>
+            Instantiate(_deathFX, transform.position, Quaternion.identity);
 
         private IEnumerator BodyCollector()
         {

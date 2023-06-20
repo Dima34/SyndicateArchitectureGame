@@ -26,7 +26,7 @@ namespace Infrastructure
                     loadingCurtain, 
                     services.GetSingle<IGameFactory>(),
                     services.GetSingle<IProgressDescriptionService>(),
-                    services.GetSingle<IPersistantProgressService>()),
+                    services.GetSingle<IUnearnedLootService>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
                     services.GetSingle<IPersistantProgressService>(),
                     services.GetSingle<ISaveLoadService>()),

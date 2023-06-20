@@ -1,15 +1,13 @@
-using System;
-
-namespace Infrastructure.Services.RandomService
+namespace Infrastructure.Services.Random
 {
     class RandomService : IRandomService
     {
-        private readonly Random _random;
+        private readonly System.Random _random;
 
         public int Next(int minValue, int maxValue) =>
             _random.Next(minValue, maxValue);
 
         public RandomService() =>
-            _random = new Random();
+            _random = new System.Random();
     }
 }

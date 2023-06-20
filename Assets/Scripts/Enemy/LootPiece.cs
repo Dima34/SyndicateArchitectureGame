@@ -1,8 +1,7 @@
-using System;
 using System.Collections;
 using Infrastructure.Data;
 using Infrastructure.Factory;
-using Infrastructure.Services.PersistantProgress;
+using Infrastructure.States;
 using Logic;
 using TMPro;
 using UnityEngine;
@@ -10,7 +9,7 @@ using UnityEngine;
 namespace Enemy
 {
     [RequireComponent(typeof(UniqueId))]
-    public class LootPiece : MonoBehaviour, ISavedProgressWriter
+    public class LootPiece : MonoBehaviour
     {
         [SerializeField] private GameObject _skull;
         [SerializeField] private TextMeshPro _lootText;
@@ -20,21 +19,25 @@ namespace Enemy
         private Loot _loot;
         private bool _isPickedUp;
         private WorldData _worldData;
-
         private string _id;
         private IGameFactory _gameFactory;
+        private IUnearnedLootService _lootService;
 
         private void Start() =>
             _id = GetComponent<UniqueId>().Id;
 
-        public void Construct(IGameFactory _gameFactory, WorldData worldData)
+        public void Construct(IUnearnedLootService lootService, WorldData worldData)
         {
-            this._gameFactory = _gameFactory;
             _worldData = worldData;
+            _lootService = lootService;
         }
 
-        public void Initialize(Loot loot) =>
+        public void Initialize(Loot loot, Vector3 position)
+        {
             _loot = loot;
+            transform.position = position;
+            RegisterOnLootService(_id, position, loot);
+        }
 
         private void OnTriggerEnter(Collider other) =>
             Pickup();
@@ -49,14 +52,12 @@ namespace Enemy
             AddLootToWorldData();
             HideSkull();
             ShowDeathPopup(_loot);
-            UnRegisterFromDataWriting();
-            RemoveFromUnearnedLootIfContains();
+            RemoveFromLootService();
             StartSelfDestroyCoroutine();
         }
 
-        private void RemoveFromUnearnedLootIfContains()
-        {
-        }
+        private void RegisterOnLootService(string id, Vector3 position, Loot loot) =>
+            _lootService.Add(id, position, loot);
 
         private void AddLootToWorldData()
         {
@@ -72,9 +73,8 @@ namespace Enemy
             _pickupTextPopup.SetActive(true);
         }
 
-        private void UnRegisterFromDataWriting() =>
-            _gameFactory.UnRegisterDataUsers(gameObject);
-
+        private void RemoveFromLootService() =>
+            _lootService.RemoveIfExists(_id);
         private void StartSelfDestroyCoroutine() =>
             StartCoroutine(DestroySelf());
 
@@ -84,24 +84,9 @@ namespace Enemy
             Destroy(gameObject);
         }
 
-        public void UpdateProgress(PlayerProgress progress)
-        {
-            if (_loot != null)
-            {
-                LootPieceData data = new LootPieceData()
-                {
-                    Id = _id,
-                    Loot = _loot,
-                    Position = transform.position.AsVectorData()
-                };
-                
-                _worldData.UnEarnedLootpieces.LootPieces.Add(data);
-            }
-        }
-
         private void OnDestroy()
         {
-            UnRegisterFromDataWriting();
+            RemoveFromLootService();
         }
     }
 }

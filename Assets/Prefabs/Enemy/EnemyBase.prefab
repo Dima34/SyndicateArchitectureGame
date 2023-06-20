@@ -206,6 +206,7 @@ MonoBehaviour:
   _deathFX: {fileID: 100004, guid: 7867af58a6ec48846ae807eb4022fbaa, type: 3}
   _agent: {fileID: 3273967467989090488}
   _animateAlongAgent: {fileID: 6134964930219785675}
+  _agentMoveToHero: {fileID: 5872113264990502499}
 --- !u!114 &1943765259369970734
 MonoBehaviour:
   m_ObjectHideFlags: 0

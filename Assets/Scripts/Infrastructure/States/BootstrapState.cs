@@ -3,7 +3,7 @@ using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
-using Infrastructure.Services.RandomService;
+using Infrastructure.Services.Random;
 using Infrastructure.Services.SaveLoad;
 using Services.Inputs;
 using StaticData;
@@ -36,6 +36,7 @@ namespace Infrastructure.States
             _services.RegisterSingle<IAssetProvider>(new AssetProvider());
             _services.RegisterSingle<IInputService>(GetInputService());
             _services.RegisterSingle<IRandomService>(new RandomService());
+            _services.RegisterSingle<IUnearnedLootService>(new UnearnedLootService());
             
             RegisterGameFactory();
         }
@@ -48,7 +49,8 @@ namespace Infrastructure.States
                 _services.GetSingle<IInputService>(),
                 _services.GetSingle<IRandomService>(),
                 _services.GetSingle<IPersistantProgressService>(),
-                _services.GetSingle<IProgressDescriptionService>()
+                _services.GetSingle<IProgressDescriptionService>(),
+                _services.GetSingle<IUnearnedLootService>()
                 ));
         }
 

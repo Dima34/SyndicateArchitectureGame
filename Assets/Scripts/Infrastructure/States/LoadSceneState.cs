@@ -1,9 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using Enemy;
 using Hero;
 using Infrastructure.Data;
 using Infrastructure.Factory;
-using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Logic;
 using UI;
@@ -14,21 +14,20 @@ namespace Infrastructure.States
     public class LoadSceneState : IPayloadedState<string>
     {
         private readonly GameStateMachine _gameStateMachine;
-        private readonly SceneLoader sceneLoader;
+        private readonly SceneLoader _sceneLoader;
         private LoadingCurtain _loadingCurtain;
         private readonly IGameFactory _gameFactory;
         private IProgressDescriptionService _progressDescriptionService;
-        private IPersistantProgressService _progressService;
+        private IUnearnedLootService _unearnedLootService;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService,
-            IPersistantProgressService progressService)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService)
         {
-            _progressService = progressService;
+            _unearnedLootService = unearnedLootService;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
-            this.sceneLoader = sceneLoader;
+            _sceneLoader = sceneLoader;
             _gameFactory = gameFactory;
         }
 
@@ -36,22 +35,29 @@ namespace Infrastructure.States
         {
             _loadingCurtain.Show();
             _progressDescriptionService.CleanupProgressMembersList();
-            sceneLoader.Load(payload, OnLevelLoaded);
+            _sceneLoader.Load(payload, OnLevelLoaded);
         }
 
         private void OnLevelLoaded()
         {
+            RegisterUnearnedLoodService();
             InitGameWorld();
 
             _progressDescriptionService.InformProgressDataReaders();
+            CreateUnearnedLoot();
 
             _gameStateMachine.Enter<GameLoopState>();
+        }
+
+        private void RegisterUnearnedLoodService()
+        {
+            _progressDescriptionService.RegisterDataReader(_unearnedLootService);
+            _progressDescriptionService.RegisterDataWriter(_unearnedLootService);
         }
 
         private void InitGameWorld()
         {
             InitSpawners();
-            CreateUnearnedLoot();
             GameObject hero = CreatePlayer();
             CreateHUD(hero);
         }
@@ -87,16 +93,16 @@ namespace Infrastructure.States
 
         private void CreateUnearnedLoot()
         {
-            WorldData worldData = _progressService.Progress.WorldData;
-            var unearnedLootDict =
-                worldData.UnEarnedLootpieces.LootPieces;
+            List<LootPieceData> unearnedLootList = _unearnedLootService.GetAll();
+            
+            List<LootPieceData> ListToIterate = unearnedLootList.ToList();
+            unearnedLootList.Clear();          
 
-            foreach (var lootItem in unearnedLootDict)
+            // Copy the list because inside of cycle we add elements inside list which we iterate
+            foreach (var lootItem in ListToIterate.ToList())
             {
-                LootPiece loot = _gameFactory.CreateLoot(); 
-                loot.Initialize(lootItem.Loot);
-
-                loot.transform.position = lootItem.Position.AsUnityVector();
+                LootPiece loot = _gameFactory.CreateLoot();
+                loot.Initialize(lootItem.Loot, lootItem.Position.AsUnityVector());
             }
         }
 

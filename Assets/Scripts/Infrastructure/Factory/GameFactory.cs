@@ -5,7 +5,8 @@ using Infrastructure.AssetManagement;
 using Infrastructure.Data;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
-using Infrastructure.Services.RandomService;
+using Infrastructure.Services.Random;
+using Infrastructure.States;
 using Logic;
 using Services.Inputs;
 using StaticData;
@@ -25,11 +26,12 @@ namespace Infrastructure.Factory
         private IRandomService _randomService;
         private readonly IPersistantProgressService _persistantProgressService;
         private IProgressDescriptionService _progressDescriptionService;
+        private IUnearnedLootService _lootService;
 
         public GameObject HeroGameObject => _heroGameObject;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData, IInputService inputService,
-            IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService)
+            IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService, IUnearnedLootService lootService)
         {
             _assetProvider = assetProvider;
             _staticData = staticData;
@@ -37,6 +39,7 @@ namespace Infrastructure.Factory
             _randomService = randomService;
             _persistantProgressService = progressService;
             _progressDescriptionService = progressDescriptionService;
+            _lootService = lootService;
         }
 
         public GameObject CreateHero(Vector3 instantiatePosition) { 
@@ -116,7 +119,7 @@ namespace Infrastructure.Factory
             var lootPiece = InstantiateResourceAndRegisterDataUsers(Constants.LOOT_RESOURCE_PATH)
                 .GetComponent<LootPiece>();
             
-            lootPiece.Construct(this, _persistantProgressService.Progress.WorldData);
+            lootPiece.Construct(_lootService, _persistantProgressService.Progress.WorldData);
             
             return lootPiece;
         }
