@@ -1,10 +1,10 @@
 using System.Linq;
-using Logic;
 using Logic.EnemySpawners;
 using StaticData;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniqueId = Logic.UniqueId;
 
 [CustomEditor(typeof(LevelStaticData))]
 public class LevelStaticDataEditor : UnityEditor.Editor
