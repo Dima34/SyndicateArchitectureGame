@@ -5,9 +5,13 @@ using Hero;
 using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services.ProgressDescription;
+using Infrastructure.Services.StaticData;
 using Logic;
 using StaticData;
 using UI;
+using UI.Elements;
+using UI.Services.Factory;
+using UI.Services.Windows;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,17 +21,21 @@ namespace Infrastructure.States
     {
         private readonly GameStateMachine _gameStateMachine;
         private readonly SceneLoader _sceneLoader;
-        private LoadingCurtain _loadingCurtain;
+        private readonly LoadingCurtain _loadingCurtain;
         private readonly IGameFactory _gameFactory;
-        private IProgressDescriptionService _progressDescriptionService;
-        private IUnearnedLootService _unearnedLootService;
-        private IStaticDataService _staticData;
+        private readonly IProgressDescriptionService _progressDescriptionService;
+        private readonly IUnearnedLootService _unearnedLootService;
+        private readonly IStaticDataService _staticData;
+        private readonly IWindowService _windowsService;
+        private readonly IUIFactory _uiFactory;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService, IStaticDataService staticData)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory)
         {
             _unearnedLootService = unearnedLootService;
             _staticData = staticData;
+            _windowsService = windowsService;
+            _uiFactory = uiFactory;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -61,10 +69,14 @@ namespace Infrastructure.States
 
         private void InitGameWorld()
         {
+            InitUIRoot();
             InitSpawners();
             GameObject hero = CreatePlayer();
             CreateHUD(hero);
         }
+
+        private void InitUIRoot() =>
+            _uiFactory.CreatUIRoot();
 
         private void InitSpawners()
         {
@@ -93,6 +105,9 @@ namespace Infrastructure.States
         private void CreateHUD(GameObject hero)
         {
             GameObject hud = _gameFactory.CreateHUD();
+            
+            foreach (OpenWindowButton openWindowButton in hud.GetComponentsInChildren<OpenWindowButton>())
+                openWindowButton.Construct(_windowsService);
 
             HeroHealth heroHealth = hero.GetComponent<HeroHealth>();
             hud.GetComponentInChildren<ActorUI>().Construct(heroHealth);

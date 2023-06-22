@@ -5,8 +5,10 @@ using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.Random;
 using Infrastructure.Services.SaveLoad;
+using Infrastructure.Services.StaticData;
 using Services.Inputs;
-using StaticData;
+using UI.Services.Factory;
+using UI.Services.Windows;
 using UnityEngine;
 
 namespace Infrastructure.States
@@ -29,36 +31,54 @@ namespace Infrastructure.States
         private void RegisterServices()
         {
             RegisterStaticDataService();
-            
-            _services.RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
-            _services.RegisterSingle<IProgressDescriptionService>(new ProgressDescriptionService(_services.GetSingle<IPersistantProgressService>()));
-            _services.RegisterSingle<ISaveLoadService>(new SaveLoadService(_services.GetSingle<IPersistantProgressService>(), _services.GetSingle<IProgressDescriptionService>()));
-            _services.RegisterSingle<IAssetProvider>(new AssetProvider());
-            _services.RegisterSingle<IInputService>(GetInputService());
-            _services.RegisterSingle<IRandomService>(new RandomService());
-            _services.RegisterSingle<IUnearnedLootService>(new UnearnedLootService());
-            
+
+            RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
+            RegisterSingle<IProgressDescriptionService>(
+                new ProgressDescriptionService(GetSingle<IPersistantProgressService>()));
+            RegisterSingle<ISaveLoadService>(new SaveLoadService(
+                GetSingle<IPersistantProgressService>(), GetSingle<IProgressDescriptionService>()));
+            RegisterSingle<IAssetProvider>(new AssetProvider());
+            RegisterSingle<IInputService>(GetInputService());
+            RegisterSingle<IRandomService>(new RandomService());
+            RegisterSingle<IUnearnedLootService>(new UnearnedLootService());
+            RegisterSingle<IAdsService>(new AdsService());
+
+            RegisterSingle<IUIFactory>(new UIFactory(
+                GetSingle<IAssetProvider>(),
+                GetSingle<IStaticDataService>(),
+                GetSingle<IPersistantProgressService>(),
+                GetSingle<IAdsService>()));
+            RegisterSingle<IWindowService>(new WindowService(GetSingle<IUIFactory>()));
+
             RegisterGameFactory();
         }
 
+        private void RegisterSingle<T>(T objectToRegister) where T : IService =>
+            RegisterSingle<T>(objectToRegister);
+
+        private T GetSingle<T>() where T : IService =>
+            GetSingle<T>();
+
         private void RegisterGameFactory()
         {
-            _services.RegisterSingle<IGameFactory>(new GameFactory(
-                _services.GetSingle<IAssetProvider>(), 
-                _services.GetSingle<IStaticDataService>(),
-                _services.GetSingle<IInputService>(),
-                _services.GetSingle<IRandomService>(),
-                _services.GetSingle<IPersistantProgressService>(),
-                _services.GetSingle<IProgressDescriptionService>(),
-                _services.GetSingle<IUnearnedLootService>()
-                ));
+            RegisterSingle<IGameFactory>(new GameFactory(
+                GetSingle<IAssetProvider>(),
+                GetSingle<IStaticDataService>(),
+                GetSingle<IInputService>(),
+                GetSingle<IRandomService>(),
+                GetSingle<IPersistantProgressService>(),
+                GetSingle<IProgressDescriptionService>(),
+                GetSingle<IUnearnedLootService>()
+            ));
         }
 
         private void RegisterStaticDataService()
         {
             IStaticDataService staticData = new StaticDataService();
-            staticData.LoadMonsters();
-            _services.RegisterSingle<IStaticDataService>(staticData);
+
+            staticData.LoadStaticData();
+
+            RegisterSingle<IStaticDataService>(staticData);
         }
 
         public void Enter()

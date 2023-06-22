@@ -25,5 +25,10 @@ namespace Infrastructure.Data
             _pointsCollected += loot.Value;
             OnChanged?.Invoke();
         }
+        public void Add(int value)
+        {
+            _pointsCollected += value;
+            OnChanged?.Invoke();
+        }
     }
 }

@@ -2,6 +2,8 @@ using Infrastructure.Data;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.SaveLoad;
+using Infrastructure.Services.StaticData;
+using StaticData;
 
 namespace Infrastructure.States
 {
@@ -10,13 +12,15 @@ namespace Infrastructure.States
         private IPersistantProgressService _progressService;
         private GameStateMachine _stateMachine;
         private ISaveLoadService _saveLoadService;
+        private IStaticDataService _staticDataService;
 
         public LoadProgressState(GameStateMachine stateMachine, IPersistantProgressService progressService,
-            ISaveLoadService saveLoadService)
+            ISaveLoadService saveLoadService, IStaticDataService staticDataService)
         {
             _stateMachine = stateMachine;
             _progressService = progressService;
             _saveLoadService = saveLoadService;
+            _staticDataService = staticDataService;
         }
 
         public void Enter()
@@ -37,7 +41,6 @@ namespace Infrastructure.States
             var playerProgress = new PlayerProgress();
 
             SetDefaultLevel(playerProgress);
-            SetDefaultHeroStats(playerProgress);
             SetDefaultHeroState(playerProgress);
             
             return playerProgress;
@@ -45,15 +48,15 @@ namespace Infrastructure.States
 
         private void SetDefaultHeroState(PlayerProgress playerProgress)
         {
-            playerProgress.HeroState.MaxHp = Constants.HERO_MAX_HP;
-            playerProgress.HeroState.ResetHP();
-        }
+            HeroStaticData staticData = _staticDataService.Hero();
+            
+            playerProgress.HeroStats.Damage = staticData.Damage;
+            playerProgress.HeroStats.HitRadius = staticData.HitRadius;
+            playerProgress.HeroStats.HitForwardOffset = staticData.HitForwardOffset;
+            playerProgress.HeroStats.HitObjectPerHit = staticData.HitObjectPerHit;
 
-        private void SetDefaultHeroStats(PlayerProgress playerProgress)
-        {
-            playerProgress.HeroStats.Damage = 2f;
-            playerProgress.HeroStats.HitRadius = 2f;
-            playerProgress.HeroStats.HitForwardOffset = 3f;
+            playerProgress.HeroStats.MaxHp = staticData.MaxHp;
+            playerProgress.HeroStats.CurrentHp = staticData.MaxHp;
         }
 
         private void SetDefaultLevel(PlayerProgress playerProgress)

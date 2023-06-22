@@ -1,14 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.SaveLoad;
+using Infrastructure.Services.StaticData;
 using Infrastructure.States;
 using Logic;
 using StaticData;
+using UI.Services.Factory;
+using UI.Services.Windows;
 
 namespace Infrastructure
 {
@@ -28,10 +30,13 @@ namespace Infrastructure
                     services.GetSingle<IGameFactory>(),
                     services.GetSingle<IProgressDescriptionService>(),
                     services.GetSingle<IUnearnedLootService>(),
-                    services.GetSingle<IStaticDataService>()),
+                    services.GetSingle<IStaticDataService>(),
+                    services.GetSingle<IWindowService>(),
+                    services.GetSingle<IUIFactory>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
                     services.GetSingle<IPersistantProgressService>(),
-                    services.GetSingle<ISaveLoadService>()),
+                    services.GetSingle<ISaveLoadService>(),
+                    services.GetSingle<IStaticDataService>()),
                 [typeof(GameLoopState)] = new GameLoopState(this),
             };
         }

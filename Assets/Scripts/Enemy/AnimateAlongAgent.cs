@@ -30,7 +30,7 @@ namespace Enemy
 
         private bool ShouldMove(float agentMovementSpeed)
         {
-            var isMoving = agentMovementSpeed > Constants.MINIMAL_SPEED;
+            var isMoving = agentMovementSpeed > Constants.EPSYLON;
             var isOnDestination = _navMeshAgent.remainingDistance > _navMeshAgent.radius;
             
             return isMoving && isOnDestination;

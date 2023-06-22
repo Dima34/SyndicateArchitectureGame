@@ -9,15 +9,14 @@ namespace Hero
 {
     public class HeroHealth : HealthBase, ISavedProgress
     {
+        private HeroStats _stats;
+
         public override float CurrentHP
         {
-            get => _state.CurrentHp;
+            get => _stats.CurrentHp;
             set
             {
-                if (value < 0)
-                    _state.CurrentHp = Constants.HERO_MINIMAL_HP;
-                else
-                    _state.CurrentHp = value;
+                _stats.CurrentHp = value > 0 ? _stats.CurrentHp = value : 0;
 
                 FireHealthChangeEvent();
             }
@@ -25,25 +24,23 @@ namespace Hero
 
         public override float MaxHP
         {
-            get => _state.MaxHp;
-            set => _state.MaxHp = value;
+            get => _stats.MaxHp;
+            set => _stats.MaxHp = value;
         }
-
-        private State _state;
 
         public override void OnTakeDamage(float damage) =>
             CurrentHP -= damage;
 
         public void LoadProgress(PlayerProgress progress)
         {
-            _state = progress.HeroState;
+            _stats = progress.HeroStats;
             FireHealthChangeEvent();
         }
 
         public void UpdateProgress(PlayerProgress progress)
         {
-            progress.HeroState.CurrentHp = CurrentHP;
-            progress.HeroState.MaxHp = MaxHP;
+            progress.HeroStats.CurrentHp = CurrentHP;
+            progress.HeroStats.MaxHp = MaxHP;
         }
     }
 }

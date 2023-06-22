@@ -18,7 +18,7 @@ namespace Hero
         private IInputService _inputService;
         private int _layerMask;
         // Physics.overlap dont recreate hit array. It will find as many object as array lenght
-        private Collider[] _hits = new Collider[Constants.HITOBJECTS_PER_HIT];
+        private Collider[] _hits;
         private int _attackDamage;
         private HeroStats _heroStats;
 
@@ -34,8 +34,11 @@ namespace Hero
                 Attack();
         }
 
-        public void LoadProgress(PlayerProgress progress) =>
+        public void LoadProgress(PlayerProgress progress)
+        {
             _heroStats = progress.HeroStats;
+            _hits = new Collider[_heroStats.HitObjectPerHit];
+        }
 
         private void Attack() =>
             _heroAnimator.PlayAttack();
