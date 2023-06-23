@@ -54,10 +54,10 @@ namespace Infrastructure.States
         }
 
         private void RegisterSingle<T>(T objectToRegister) where T : IService =>
-            RegisterSingle<T>(objectToRegister);
+            _services.RegisterSingle<T>(objectToRegister);
 
         private T GetSingle<T>() where T : IService =>
-            GetSingle<T>();
+            _services.GetSingle<T>();
 
         private void RegisterGameFactory()
         {
