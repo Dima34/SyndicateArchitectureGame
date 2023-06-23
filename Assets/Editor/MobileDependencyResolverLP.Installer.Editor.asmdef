@@ -1,0 +1,18 @@
+{
+    "name": "MobileDependencyResolverLP.Installer.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6bbea0c6ef98b4bc582223d4b8d876e8"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
