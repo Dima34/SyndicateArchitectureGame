@@ -1,10 +1,11 @@
 using Infrastructure.Data;
 using UnityEditor;
+using Progress = Infrastructure.Data.Progress;
 
 namespace Infrastructure.Services.PersistantProgress
 {
     public interface IPersistantProgressService : IService
     {
-        PlayerProgress Progress { get; set; }
+        Progress Progress { get; set; }
     }
 }

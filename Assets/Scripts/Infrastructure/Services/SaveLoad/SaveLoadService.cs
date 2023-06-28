@@ -24,13 +24,13 @@ namespace Infrastructure.Services.SaveLoad
             PlayerPrefs.SetString(Constants.PROGRESS_KEY, jsonedData);
         }
 
-        private PlayerProgress GetProgress() =>
+        private Progress GetProgress() =>
             _progressService.Progress;
 
-        public PlayerProgress LoadProgress()
+        public Progress LoadProgress()
         {
             return PlayerPrefs.GetString(Constants.PROGRESS_KEY)?
-                .ToDeserialized<PlayerProgress>();
+                .ToDeserialized<Progress>();
         }
     }
 }

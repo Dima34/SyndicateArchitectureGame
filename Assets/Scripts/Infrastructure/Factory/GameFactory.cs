@@ -69,7 +69,7 @@ namespace Infrastructure.Factory
         }
 
         private void ConstructLootCounter(GameObject hud) =>
-            hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.WorldData);
+            hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.CollectedPointsData);
 
         public GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent)
         {
@@ -122,7 +122,7 @@ namespace Infrastructure.Factory
             var lootPiece = InstantiateResourceAndRegisterDataUsers(AssetPath.LOOT_RESOURCE_PATH)
                 .GetComponent<LootPiece>();
             
-            lootPiece.Construct(_lootService, _persistantProgressService.Progress.WorldData);
+            lootPiece.Construct(_lootService, _persistantProgressService.Progress.CollectedPointsData);
             
             return lootPiece;
         }

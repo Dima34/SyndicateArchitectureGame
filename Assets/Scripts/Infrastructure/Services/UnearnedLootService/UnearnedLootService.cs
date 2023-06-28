@@ -6,13 +6,13 @@ namespace Infrastructure.States
 {
     public class UnearnedLootService : IUnearnedLootService
     {
-        private List<LootPieceData> _unearnedLoot;
+        private List<LootPieceData> _unearnedLoot = new List<LootPieceData>();
 
-        public void LoadProgress(PlayerProgress progress) =>
-            _unearnedLoot = progress.WorldData.UnEarnedLootpieces.LootPieces;
-
-        public void UpdateProgress(PlayerProgress progress) =>
-            progress.WorldData.UnEarnedLootpieces.LootPieces = _unearnedLoot;
+        public void LoadProgress(Progress progress) =>
+            _unearnedLoot = progress.WorldData.GetCurrentLevelData().UnEarnedLootPieces;
+    
+        public void UpdateProgress(Progress progress) =>
+            progress.WorldData.GetCurrentLevelData().UnEarnedLootPieces = _unearnedLoot;
 
         public void RemoveIfExists(string id)
         {

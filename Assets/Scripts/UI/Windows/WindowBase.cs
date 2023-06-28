@@ -18,7 +18,7 @@ namespace UI.Windows
             set => _progressService = value;
         }
 
-        public PlayerProgress Progress => _progressService.Progress;
+        public Progress Progress => _progressService.Progress;
 
         private void Awake() =>
             OnAwake();

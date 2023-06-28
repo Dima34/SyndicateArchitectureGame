@@ -8,18 +8,18 @@ namespace UI.Elements
     {
         [SerializeField] private TextMeshProUGUI _counter;
 
-        private WorldData _worldData;
+        private CollectedPointsData _collectedPointsData;
 
         private void Start() =>
             UpdateCounter();
 
-        public void Construct(WorldData worldData)
+        public void Construct(CollectedPointsData collectedPointsData)
         {
-            _worldData = worldData;
-            _worldData.LootData.OnChanged += UpdateCounter;
+            _collectedPointsData = collectedPointsData;
+            _collectedPointsData.OnChanged += UpdateCounter;
         }
 
         private void UpdateCounter() =>
-            _counter.text = $"{_worldData.LootData.PointsCollected}";
+            _counter.text = $"{_collectedPointsData.PointsCollected.ToString()}";
     }
 }

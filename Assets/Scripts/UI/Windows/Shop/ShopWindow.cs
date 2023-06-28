@@ -26,17 +26,17 @@ namespace UI.Windows
         protected override void SubscribeUpdates()
         {
             _rewardedAdItem.Subscribe();
-            Progress.WorldData.LootData.OnChanged += RefreshSkullText;
+            Progress.CollectedPointsData.OnChanged += RefreshSkullText;
         }
 
         protected override void Cleanup()
         {
             base.Cleanup();
             _rewardedAdItem.Cleanup();
-            Progress.WorldData.LootData.OnChanged -= RefreshSkullText;
+            Progress.CollectedPointsData.OnChanged -= RefreshSkullText;
         }
 
         private void RefreshSkullText() =>
-            _skullText.text = Progress.WorldData.LootData.PointsCollected.ToString();
+            _skullText.text = Progress.CollectedPointsData.PointsCollected.ToString();
     }
 }

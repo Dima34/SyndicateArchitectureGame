@@ -25,7 +25,7 @@ namespace Logic.EnemySpawners
             _monsterTypeId = monsterTypeId;
         }
 
-        public void LoadProgress(PlayerProgress progress)
+        public void LoadProgress(Progress progress)
         {
             if (progress.KillData.ClearedSpawners.Contains(_id))
                 _slain = true;
@@ -42,7 +42,7 @@ namespace Logic.EnemySpawners
         private void Slain() =>
             _slain = true;
 
-        public void UpdateProgress(PlayerProgress progress)
+        public void UpdateProgress(Progress progress)
         {
             if (_slain)
                 progress.KillData.ClearedSpawners.Add(_id);

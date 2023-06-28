@@ -52,7 +52,7 @@ namespace Infrastructure.States
 
         private void OnLevelLoaded()
         {
-            RegisterUnearnedLoodService();
+            RegisterUnearnedLootService();
             InitGameWorld();
 
             _progressDescriptionService.InformProgressDataReaders();
@@ -61,7 +61,7 @@ namespace Infrastructure.States
             _gameStateMachine.Enter<GameLoopState>();
         }
 
-        private void RegisterUnearnedLoodService()
+        private void RegisterUnearnedLootService()
         {
             _progressDescriptionService.RegisterDataReader(_unearnedLootService);
             _progressDescriptionService.RegisterDataWriter(_unearnedLootService);
@@ -70,6 +70,7 @@ namespace Infrastructure.States
         private void InitGameWorld()
         {
             InitUIRoot();
+            InitUIConsole();
             InitSpawners();
             GameObject hero = CreatePlayer();
             CreateHUD(hero);
@@ -77,6 +78,9 @@ namespace Infrastructure.States
 
         private void InitUIRoot() =>
             _uiFactory.CreatUIRoot();
+
+        private void InitUIConsole() =>
+            _uiFactory.CreateUIConsole();
 
         private void InitSpawners()
         {

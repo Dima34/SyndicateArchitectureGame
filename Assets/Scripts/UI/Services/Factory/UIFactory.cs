@@ -3,7 +3,6 @@ using Infrastructure.AssetManagement;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.StaticData;
 using Infrastructure.States;
-using StaticData;
 using UI.Services.Windows;
 using UI.Windows;
 using UnityEngine;
@@ -36,5 +35,8 @@ namespace UI.Services.Factory
             
             window.Construct(_adsService,_progerssService);
         }
+
+        public void CreateUIConsole() =>
+            _assetProvider.InstantiateResourse(AssetPath.INGAMECONSOLE_PATH);
     }
 }

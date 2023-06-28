@@ -18,18 +18,18 @@ namespace Enemy
         
         private Loot _loot;
         private bool _isPickedUp;
-        private WorldData _worldData;
         private string _id;
         private IGameFactory _gameFactory;
         private IUnearnedLootService _lootService;
+        private CollectedPointsData _collectedPoints;
 
-        private void Start() =>
+        private void Awake() =>
             _id = GetComponent<UniqueId>().Id;
 
-        public void Construct(IUnearnedLootService lootService, WorldData worldData)
+        public void Construct(IUnearnedLootService lootService, CollectedPointsData collectedPoints)
         {
-            _worldData = worldData;
             _lootService = lootService;
+            _collectedPoints = collectedPoints;
         }
 
         public void Initialize(Loot loot, Vector3 position)
@@ -61,7 +61,7 @@ namespace Enemy
 
         private void AddLootToWorldData()
         {
-            _worldData.LootData.Collect(_loot);
+            _collectedPoints.Collect(_loot);
         }
 
         private void HideSkull() =>

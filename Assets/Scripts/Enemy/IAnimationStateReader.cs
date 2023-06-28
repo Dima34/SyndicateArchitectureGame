@@ -1,4 +1,4 @@
-using UnityEditor.Animations;
+using UnityEngine;
 
 namespace Enemy
 {
@@ -6,6 +6,6 @@ namespace Enemy
     {
         void EnterState(int stateHash);
         void ExitState(int stateHash);
-        AnimatorState State { get; }
+        AnimatorStateInfo State { get; }
     }
 }

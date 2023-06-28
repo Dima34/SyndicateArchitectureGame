@@ -37,7 +37,7 @@ namespace UI.Windows.Rewarded
             _adsService.ShowRewardedVideo(OnVideoFinished);
 
         private void OnVideoFinished() =>
-            _progressService.Progress.WorldData.LootData.Add(_adsService.Reward);
+            _progressService.Progress.CollectedPointsData.Add(_adsService.Reward);
 
         private void RefreshAvailableAd()
         {
