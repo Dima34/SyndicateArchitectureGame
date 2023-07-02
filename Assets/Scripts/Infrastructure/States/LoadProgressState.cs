@@ -54,7 +54,6 @@ namespace Infrastructure.States
             for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCountInBuildSettings; sceneIndex++)
             {
                 var scene = SceneManager.GetSceneByBuildIndex(sceneIndex);
-                SceneSearch
                 progress.WorldData.LevelsData.Add(new LevelData(scene.name));
             }
 
