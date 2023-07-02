@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Infrastructure.Data;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.SaveLoad;
@@ -51,17 +52,22 @@ namespace Infrastructure.States
 
         private void FillLevelData(Progress progress)
         {
-            for (int sceneIndex = 0; sceneIndex < SceneManager.sceneCountInBuildSettings; sceneIndex++)
+            for( int i = 0; i < SceneManager.sceneCountInBuildSettings; i++ )
             {
-                var scene = SceneManager.GetSceneByBuildIndex(sceneIndex);
-                progress.WorldData.LevelsData.Add(new LevelData(scene.name));
-            }
+                string scene = SceneUtility.GetScenePathByBuildIndex(i);
+                var sceneNameWithoutExtension = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
 
+                progress.WorldData.LevelsData.Add(new LevelData(sceneNameWithoutExtension));
+            }
+            
             progress.WorldData.CurrentLevel = Constants.START_LEVEL_NAME;
         }
 
-        private static void InitUnearnedPices(Progress playerProgress) =>
-            playerProgress.WorldData.GetCurrentLevelData().UnEarnedLootPieces = new List<LootPieceData>();
+        private static void InitUnearnedPices(Progress playerProgress)
+        {
+            var currentLevel = playerProgress.WorldData.GetCurrentLevelData();
+            currentLevel.UnEarnedLootPieces = new List<LootPieceData>();
+        }
 
         private void SetDefaultHeroState(Progress progress)
         {
