@@ -49,5 +49,10 @@ namespace UI.Windows.Rewarded
             foreach (GameObject inActiveObject in _adInActiveObjects) 
                 inActiveObject.SetActive(videoReady);
         }
+
+        public void GetRewardCount(string placementName)
+        {
+            IronSource.Agent.getPlacementInfo(placementName);
+        }
     }
 }

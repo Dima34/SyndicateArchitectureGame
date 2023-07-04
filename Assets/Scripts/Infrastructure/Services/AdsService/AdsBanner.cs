@@ -1,13 +1,8 @@
 namespace Infrastructure.States
 {
-    class AdsBanner
+    public class AdsBanner : IAd 
     {
         public void Initialize()
-        {   
-            RegisterEvents();
-        }
-        
-        private void RegisterEvents()
         {
             IronSourceBannerEvents.onAdLoadedEvent += BannerOnAdLoadedEvent;
             IronSourceBannerEvents.onAdLoadFailedEvent += BannerOnAdLoadFailedEvent;
@@ -16,17 +11,17 @@ namespace Infrastructure.States
             IronSourceBannerEvents.onAdScreenDismissedEvent += BannerOnAdScreenDismissedEvent;
             IronSourceBannerEvents.onAdLeftApplicationEvent += BannerOnAdLeftApplicationEvent;
         }
-        
-        public void LoadBanner() =>
+
+        public void Load() =>
             IronSource.Agent.loadBanner(IronSourceBannerSize.BANNER, IronSourceBannerPosition.BOTTOM);
 
-        public void HideBanner() =>
+        public void Hide() =>
             IronSource.Agent.hideBanner();
 
-        public void ShowBanner() =>
+        public void Show() =>
             IronSource.Agent.displayBanner();
 
-        public void DestroyBanner() =>
+        public void Destroy() =>
             IronSource.Agent.destroyBanner();
         
         

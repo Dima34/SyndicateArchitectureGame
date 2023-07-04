@@ -1,6 +1,6 @@
 namespace Infrastructure.States
 {
-    internal class AdsRewarded : IAd
+    public class AdsRewarded : IAd
     {
         public void Initialize()
         {

@@ -1,6 +1,6 @@
 namespace Infrastructure.States
 {
-    internal class AdsInterstitial
+    public class AdsInterstitial : IAd 
     {
         public void Initialize()
         {
@@ -22,10 +22,8 @@ namespace Infrastructure.States
                 IronSource.Agent.showInterstitial();
         }
 
-        private static bool IsReady()
-        {
-            return IronSource.Agent.isInterstitialReady();
-        }
+        public bool IsReady() =>
+            IronSource.Agent.isInterstitialReady();
 
         /************* Interstitial AdInfo Delegates *************/
 // Invoked when the interstitial ad was loaded succesfully.

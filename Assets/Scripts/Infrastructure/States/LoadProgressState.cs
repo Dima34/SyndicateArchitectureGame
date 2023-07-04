@@ -5,7 +5,6 @@ using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.SaveLoad;
 using Infrastructure.Services.StaticData;
 using StaticData;
-using UnityEditor.SearchService;
 using UnityEngine.SceneManagement;
 
 namespace Infrastructure.States
