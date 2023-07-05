@@ -1,6 +1,4 @@
 using System;
-using Common;
-using Infrastructure.Factory;
 
 namespace Infrastructure.States
 {
@@ -13,6 +11,7 @@ namespace Infrastructure.States
         private const string APP_KEY = "1a8f5cbc5";
 
         public event Action RewardedVideoReady;
+        public event Action RewardedVideoClosed;
 
         public AdsService()
         {
@@ -24,7 +23,8 @@ namespace Infrastructure.States
         private void RegisterEvents()
         {
             IronSourceEvents.onSdkInitializationCompletedEvent += SdkInitializationCompletedEvent;
-            IronSourceEvents.onRewardedVideoAdReadyEvent += RewardedVideoReady;
+            IronSourceEvents.onRewardedVideoAdReadyEvent += ()=>RewardedVideoReady.Invoke();
+            IronSourceEvents.onRewardedVideoAdClosedEvent += ()=>RewardedVideoClosed.Invoke();
         }
 
         private void CreateAds()
@@ -80,5 +80,6 @@ namespace Infrastructure.States
                 executeOnEnd?.Invoke(placement, adInfo);
             }
         }
+
     }
 }

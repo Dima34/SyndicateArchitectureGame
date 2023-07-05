@@ -29,11 +29,17 @@ namespace UI.Windows.Rewarded
             RefreshAvailableAd();
         }
 
-        public void Subscribe() =>
+        public void Subscribe()
+        {
             _adsService.RewardedVideoReady += RefreshAvailableAd;
+            _adsService.RewardedVideoClosed += RefreshAvailableAd;
+        }
 
-        public void Cleanup() =>
+        public void Cleanup()
+        {
             _adsService.RewardedVideoReady -= RefreshAvailableAd;
+            _adsService.RewardedVideoClosed -= RefreshAvailableAd;
+        }
 
         private void OnShowAdClicked() =>
             _adsService.ShowRewardedAndExecuteOnEnd(REWARDED_VIDEO_PLACEMENT, OnVideoEnded);
@@ -41,7 +47,7 @@ namespace UI.Windows.Rewarded
         private void OnVideoEnded(IronSourcePlacement placement, IronSourceAdInfo adInfo) =>
             _progressService.Progress.CollectedPointsData.Add(placement.getRewardAmount());
 
-        private void RefreshAvailableAd()
+        private void RefreshAvailableAd() 
         {
             var videoReady = _adsService.IsRewardedVideoReady(REWARDED_VIDEO_PLACEMENT);
 
@@ -51,5 +57,7 @@ namespace UI.Windows.Rewarded
             foreach (GameObject inActiveObject in _adInActiveObjects) 
                 inActiveObject.SetActive(videoReady);
         }
+        
+        
     }
 }
