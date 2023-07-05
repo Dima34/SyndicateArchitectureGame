@@ -17,6 +17,7 @@ using UI.Elements;
 using UnityEngine;
 using UnityEngine.AI;
 using Object = UnityEngine.Object;
+using Logger = Common.Logger; 
 
 namespace Infrastructure.Factory
 {
@@ -30,8 +31,10 @@ namespace Infrastructure.Factory
         private readonly IPersistantProgressService _persistantProgressService;
         private IProgressDescriptionService _progressDescriptionService;
         private IUnearnedLootService _lootService;
+        private Logger _logger;
 
         public GameObject HeroGameObject => _heroGameObject;
+        public Logger Logger => _logger;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData, IInputService inputService,
             IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService, IUnearnedLootService lootService)
@@ -44,6 +47,9 @@ namespace Infrastructure.Factory
             _progressDescriptionService = progressDescriptionService;
             _lootService = lootService;
         }
+
+        public void CreateLogger() =>
+            _logger = InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER_PATH).GetComponent<Logger>();
 
         public GameObject CreateHero(Vector3 instantiatePosition) { 
             _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
