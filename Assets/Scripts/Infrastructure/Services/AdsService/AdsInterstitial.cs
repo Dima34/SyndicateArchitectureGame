@@ -1,6 +1,8 @@
+using Common;
+
 namespace Infrastructure.States
 {
-    public class AdsInterstitial : IAd 
+    public class AdsInterstitial 
     {
         public void Initialize()
         {
@@ -16,14 +18,18 @@ namespace Infrastructure.States
         public void Load() =>
             IronSource.Agent.loadInterstitial();
 
-        public void Show()
-        {
-            if (IsReady()) 
-                IronSource.Agent.showInterstitial();
-        }
+        public void Show(string placementName) =>
+            IronSource.Agent.showInterstitial(placementName);
 
-        public bool IsReady() =>
-            IronSource.Agent.isInterstitialReady();
+        public bool IsReady(string placementName) =>
+            !IronSource.Agent.isInterstitialPlacementCapped(placementName);
+
+        public void ShowIfReady(string placementName)
+        {
+            Logger.Log($"Is {placementName} interstital ready {IsReady(placementName)}");
+            if (IsReady(placementName)) 
+                Show(placementName);
+        }
 
         /************* Interstitial AdInfo Delegates *************/
 // Invoked when the interstitial ad was loaded succesfully.
@@ -52,11 +58,10 @@ namespace Infrastructure.States
         }
 
 // Invoked when the interstitial ad closed and the user went back to the application screen.
-        void InterstitialOnAdClosedEvent(IronSourceAdInfo adInfo)
-        {
-        }
+        void InterstitialOnAdClosedEvent(IronSourceAdInfo adInfo) =>
+            IronSource.Agent.loadInterstitial();
 
-// Invoked before the interstitial ad was opened, and before the InterstitialOnAdOpenedEvent is reported.
+        // Invoked before the interstitial ad was opened, and before the InterstitialOnAdOpenedEvent is reported.
 // This callback is not supported by all networks, and we recommend using it only if  
 // it's supported by all networks you included in your build. 
         void InterstitialOnAdShowSucceededEvent(IronSourceAdInfo adInfo)

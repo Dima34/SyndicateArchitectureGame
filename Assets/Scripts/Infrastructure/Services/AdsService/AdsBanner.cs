@@ -1,6 +1,6 @@
 namespace Infrastructure.States
 {
-    public class AdsBanner : IAd 
+    public class AdsBanner 
     {
         public void Initialize()
         {
@@ -18,7 +18,7 @@ namespace Infrastructure.States
         public void Hide() =>
             IronSource.Agent.hideBanner();
 
-        public void Show() =>
+        public void ShowIfReady(string placementName) =>
             IronSource.Agent.displayBanner();
 
         public void Destroy() =>

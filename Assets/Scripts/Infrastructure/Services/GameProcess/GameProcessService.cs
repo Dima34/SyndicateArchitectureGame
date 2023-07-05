@@ -1,15 +1,17 @@
+using UnityEngine;
+
 namespace Infrastructure.States
 {
     public class GameProcessService : IGameProcessService
     {
         public void PauseGame()
         {
-            throw new System.NotImplementedException();
+            Time.timeScale = 0;
         }
 
         public void ResumeGame()
         {
-            throw new System.NotImplementedException();
+            Time.timeScale = 1;
         }
     }
 }

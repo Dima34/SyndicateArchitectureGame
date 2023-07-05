@@ -1,5 +1,6 @@
 using System;
-using UnityEngine;
+using Common;
+using Infrastructure.Factory;
 
 namespace Infrastructure.States
 {
@@ -8,17 +9,14 @@ namespace Infrastructure.States
         private AdsBanner _bannerAd;
         private AdsInterstitial _interstitialAd;
         private AdsRewarded _rewardedAd;
+
         private const string APP_KEY = "1a8f5cbc5";
 
         public event Action RewardedVideoReady;
-        public bool IsRewardedVideoReady => _interstitialAd.IsReady();
-
-        public int Reward { get; } = 13;
 
         public AdsService()
         {
             CreateAds();
-
             Initialize();
             RegisterEvents();
         }
@@ -45,6 +43,9 @@ namespace Infrastructure.States
             _rewardedAd.Initialize();
         }
 
+        void OnApplicationPause(bool isPaused) =>
+            IronSource.Agent.onApplicationPause(isPaused);
+
         private void SdkInitializationCompletedEvent()
         {
             _bannerAd.Load();
@@ -52,16 +53,32 @@ namespace Infrastructure.States
             _rewardedAd.Load();
         }
 
-        public void ShowInterstitial() =>
-            _interstitialAd.Show();
+        public void ShowInterstitialIfReady(string placementName)
+        {
+            _interstitialAd.ShowIfReady(placementName);
+        }
 
-        public void ShowRewarded() => 
-            _rewardedAd.Show();
+        public bool IsRewardedVideoReady(string placementName)
+        {
+            var isRewardedVideoReady = _rewardedAd.IsReady(placementName);
+            return isRewardedVideoReady;
+        }
 
-        void OnApplicationPause(bool isPaused) =>
-            IronSource.Agent.onApplicationPause(isPaused);
+        public void ShowRewarded(string placementName) => 
+            _rewardedAd.Show(placementName);
 
-        public void ShowRewardedVideo(Action onVideoFinished) =>
-            ShowRewarded();
+        public void ShowRewardedAndExecuteOnEnd(
+            string placementName, 
+            Action<IronSourcePlacement, IronSourceAdInfo> executeOnEnd)
+        {
+            ShowRewarded(placementName);
+            _rewardedAd.OnAdRewarded += RecieveReward;
+            
+            void RecieveReward(IronSourcePlacement placement, IronSourceAdInfo adInfo)
+            {
+                _rewardedAd.OnAdRewarded -= RecieveReward;
+                executeOnEnd?.Invoke(placement, adInfo);
+            }
+        }
     }
 }

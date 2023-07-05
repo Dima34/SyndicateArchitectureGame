@@ -11,16 +11,24 @@ namespace UI.Windows
         [SerializeField] private TMP_Text _skullText;
         [SerializeField] private RewardedAdItem _rewardedAdItem;
 
-        public void Construct(IAdsService adsService, IPersistantProgressService progressService)
+        private IAdsService _adsService;
+
+        private const string INTERSTITAL_PLACEMENT = "DefaultInterstitial";
+        
+        public void Construct(IAdsService adsService, IPersistantProgressService progressService,
+            IGameProcessService gameProcessService)
         {
-            base.Construct(progressService);
+            base.Construct(progressService, gameProcessService);
             _rewardedAdItem.Construct(adsService, progressService);
+            _adsService = adsService;
         }
 
         protected override void Initialize()
         {
+            base.Initialize();
             _rewardedAdItem.Initialize();
             RefreshSkullText();
+            ShowInterstitialIfAvailable();
         }
 
         protected override void SubscribeUpdates()
@@ -38,5 +46,9 @@ namespace UI.Windows
 
         private void RefreshSkullText() =>
             _skullText.text = Progress.CollectedPointsData.PointsCollected.ToString();
+
+        private void ShowInterstitialIfAvailable() =>
+            _adsService.ShowInterstitialIfReady(INTERSTITAL_PLACEMENT);
+
     }
 }
