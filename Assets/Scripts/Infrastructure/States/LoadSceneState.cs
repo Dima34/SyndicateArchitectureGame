@@ -69,11 +69,17 @@ namespace Infrastructure.States
 
         private void InitGameWorld()
         {
+            CreateLogger();
             InitUIRoot();
             InitUIConsole();
             InitSpawners();
             GameObject hero = CreatePlayer();
             CreateHUD(hero);
+        }
+
+        private void CreateLogger()
+        {
+            _gameFactory.CreateLogger();
         }
 
         private void InitUIRoot() =>
