@@ -1,4 +1,5 @@
 using System;
+using Common;
 
 namespace Infrastructure.States
 {
@@ -10,7 +11,6 @@ namespace Infrastructure.States
 
         private const string APP_KEY = "1a8f5cbc5";
 
-        public event Action RewardedVideoReady;
         public event Action RewardedVideoClosed;
 
         public AdsService()
@@ -18,13 +18,6 @@ namespace Infrastructure.States
             CreateAds();
             Initialize();
             RegisterEvents();
-        }
-
-        private void RegisterEvents()
-        {
-            IronSourceEvents.onSdkInitializationCompletedEvent += SdkInitializationCompletedEvent;
-            IronSourceEvents.onRewardedVideoAdReadyEvent += ()=>RewardedVideoReady.Invoke();
-            IronSourceEvents.onRewardedVideoAdClosedEvent += ()=>RewardedVideoClosed.Invoke();
         }
 
         private void CreateAds()
@@ -41,6 +34,13 @@ namespace Infrastructure.States
             _bannerAd.Initialize();
             _interstitialAd.Initialize();
             _rewardedAd.Initialize();
+        }
+
+        private void RegisterEvents()
+        {
+            IronSourceEvents.onSdkInitializationCompletedEvent += SdkInitializationCompletedEvent;
+            
+            _rewardedAd.OnClose += () => RewardedVideoClosed?.Invoke();
         }
 
         void OnApplicationPause(bool isPaused) =>
@@ -72,11 +72,11 @@ namespace Infrastructure.States
             Action<IronSourcePlacement, IronSourceAdInfo> executeOnEnd)
         {
             ShowRewarded(placementName);
-            _rewardedAd.OnAdRewarded += RecieveReward;
+            _rewardedAd.OnRewarded += RecieveReward;
             
             void RecieveReward(IronSourcePlacement placement, IronSourceAdInfo adInfo)
             {
-                _rewardedAd.OnAdRewarded -= RecieveReward;
+                _rewardedAd.OnRewarded -= RecieveReward;
                 executeOnEnd?.Invoke(placement, adInfo);
             }
         }

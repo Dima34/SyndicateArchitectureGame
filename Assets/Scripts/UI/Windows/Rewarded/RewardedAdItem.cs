@@ -29,17 +29,11 @@ namespace UI.Windows.Rewarded
             RefreshAvailableAd();
         }
 
-        public void Subscribe()
-        {
-            _adsService.RewardedVideoReady += RefreshAvailableAd;
+        public void Subscribe() =>
             _adsService.RewardedVideoClosed += RefreshAvailableAd;
-        }
 
-        public void Cleanup()
-        {
-            _adsService.RewardedVideoReady -= RefreshAvailableAd;
+        public void Cleanup() =>
             _adsService.RewardedVideoClosed -= RefreshAvailableAd;
-        }
 
         private void OnShowAdClicked() =>
             _adsService.ShowRewardedAndExecuteOnEnd(REWARDED_VIDEO_PLACEMENT, OnVideoEnded);

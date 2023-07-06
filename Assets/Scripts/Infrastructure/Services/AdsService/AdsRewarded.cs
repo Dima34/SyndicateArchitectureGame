@@ -1,11 +1,14 @@
 using System;
+using Logger = Common.Logger;
 
 namespace Infrastructure.States
 {
     public class AdsRewarded
     {
-        public event Action<IronSourcePlacement, IronSourceAdInfo> OnAdRewarded;
-
+        public event Action<IronSourcePlacement, IronSourceAdInfo> OnRewarded;
+        public event Action OnReady;
+        public event Action OnClose;
+        
         public void Initialize()
         {
             IronSourceRewardedVideoEvents.onAdOpenedEvent += OnAdOpened;
@@ -17,8 +20,11 @@ namespace Infrastructure.States
             IronSourceRewardedVideoEvents.onAdClickedEvent += OnAdClickedEvent;
         }
 
-        public void Load() =>
-            IronSource.Agent.loadRewardedVideo();
+        public void Load()
+        {
+            // IronSource.Agent.loadRewardedVideo();
+            
+        }
 
         public void Show(string placementName) =>
             IronSource.Agent.showRewardedVideo(placementName);
@@ -30,9 +36,12 @@ namespace Infrastructure.States
 // Indicates that there’s an available ad.
 // The adInfo object includes information about the ad that was loaded successfully
 // This replaces the RewardedVideoAvailabilityChangedEvent(true) event
-        void OnAdAvailable(IronSourceAdInfo adInfo) {
+        void OnAdAvailable(IronSourceAdInfo adInfo)
+        {
+            
         }
-// Indicates that no ads are available to be displayed
+
+        // Indicates that no ads are available to be displayed
 // This replaces the RewardedVideoAvailabilityChangedEvent(false) event
         void OnAdUnavailable() {
         }
@@ -40,13 +49,16 @@ namespace Infrastructure.States
         void OnAdOpened(IronSourceAdInfo adInfo){
         }
 // The Rewarded Video ad view is about to be closed. Your activity will regain its focus.
-        void OnAdClosed(IronSourceAdInfo adInfo){
+        void OnAdClosed(IronSourceAdInfo adInfo)
+        {
+            OnClose?.Invoke();
         }
-// The user completed to watch the video, and should be rewarded.
+
+        // The user completed to watch the video, and should be rewarded.
 // The placement parameter will include the reward data.
 // When using server-to-server callbacks, you may ignore this event and wait for the ironSource server callback.
         void AdRewarded(IronSourcePlacement placement, IronSourceAdInfo adInfo) =>
-            OnAdRewarded?.Invoke(placement, adInfo);
+            OnRewarded?.Invoke(placement, adInfo);
 
         // The rewarded video ad was failed to show.
         void OnAdShowFailed(IronSourceError error, IronSourceAdInfo adInfo){
@@ -56,5 +68,6 @@ namespace Infrastructure.States
 // it’s supported by all networks you included in your build.
         void OnAdClickedEvent(IronSourcePlacement placement, IronSourceAdInfo adInfo){
         }
+
     }
 }

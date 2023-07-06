@@ -26,7 +26,6 @@ namespace Infrastructure.States
 
         public void ShowIfReady(string placementName)
         {
-            Logger.Log($"Is {placementName} interstital ready {IsReady(placementName)}");
             if (IsReady(placementName)) 
                 Show(placementName);
         }
