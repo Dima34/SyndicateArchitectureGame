@@ -2,7 +2,6 @@ using System;
 using Enemy;
 using Hero;
 using Infrastructure.AssetManagement;
-using Infrastructure.Data;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.Random;
@@ -12,11 +11,11 @@ using Logic;
 using Logic.EnemySpawners;
 using Services.Inputs;
 using StaticData;
-using UI;
 using UI.Elements;
 using UnityEngine;
 using UnityEngine.AI;
 using Object = UnityEngine.Object;
+using Logger = Common.Logger; 
 
 namespace Infrastructure.Factory
 {
@@ -30,8 +29,10 @@ namespace Infrastructure.Factory
         private readonly IPersistantProgressService _persistantProgressService;
         private IProgressDescriptionService _progressDescriptionService;
         private IUnearnedLootService _lootService;
+        private Logger _logger;
 
         public GameObject HeroGameObject => _heroGameObject;
+        public Logger Logger => _logger;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData, IInputService inputService,
             IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService, IUnearnedLootService lootService)
@@ -44,6 +45,9 @@ namespace Infrastructure.Factory
             _progressDescriptionService = progressDescriptionService;
             _lootService = lootService;
         }
+
+        public void CreateLogger() =>
+            _logger = InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER_PATH).GetComponent<Logger>();
 
         public GameObject CreateHero(Vector3 instantiatePosition) { 
             _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
@@ -69,7 +73,7 @@ namespace Infrastructure.Factory
         }
 
         private void ConstructLootCounter(GameObject hud) =>
-            hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.WorldData);
+            hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.CollectedPointsData);
 
         public GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent)
         {
@@ -122,7 +126,7 @@ namespace Infrastructure.Factory
             var lootPiece = InstantiateResourceAndRegisterDataUsers(AssetPath.LOOT_RESOURCE_PATH)
                 .GetComponent<LootPiece>();
             
-            lootPiece.Construct(_lootService, _persistantProgressService.Progress.WorldData);
+            lootPiece.Construct(_lootService, _persistantProgressService.Progress.CollectedPointsData);
             
             return lootPiece;
         }

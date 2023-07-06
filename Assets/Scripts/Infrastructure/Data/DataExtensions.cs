@@ -1,5 +1,3 @@
-using Infrastructure.Services.PersistantProgress;
-using UnityEditor;
 using UnityEngine;
 
 namespace Infrastructure.Data
@@ -28,5 +26,9 @@ namespace Infrastructure.Data
 
             return vector;
         }
+        
+        public static LevelData GetCurrentLevelData(this WorldData worldData) =>
+            worldData.LevelsData.Find(x => x.Name == worldData.CurrentLevel);
+        
     }
 }

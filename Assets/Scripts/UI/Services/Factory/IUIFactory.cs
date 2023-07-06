@@ -6,5 +6,6 @@ namespace UI.Services.Factory
     {
         void CreateShop();
         void CreatUIRoot();
+        void CreateUIConsole();
     }
 }

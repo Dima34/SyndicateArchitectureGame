@@ -4,7 +4,7 @@ namespace Infrastructure.Services.SaveLoad
 {
     public interface ISaveLoadService : IService
     {
-        PlayerProgress LoadProgress();
+        Progress LoadProgress();
         void SaveProgress();
     }
     

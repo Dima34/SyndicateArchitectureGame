@@ -13,6 +13,8 @@ namespace UI.Windows.Rewarded
         
         private IAdsService _adsService;
         private IPersistantProgressService _progressService;
+        
+        private const string REWARDED_VIDEO_PLACEMENT = "Startup";
 
         public void Construct(IAdsService adsService, IPersistantProgressService progressService)
         {
@@ -28,20 +30,20 @@ namespace UI.Windows.Rewarded
         }
 
         public void Subscribe() =>
-            _adsService.RewardedVideoReady += RefreshAvailableAd;
+            _adsService.RewardedVideoClosed += RefreshAvailableAd;
 
         public void Cleanup() =>
-            _adsService.RewardedVideoReady -= RefreshAvailableAd;
+            _adsService.RewardedVideoClosed -= RefreshAvailableAd;
 
         private void OnShowAdClicked() =>
-            _adsService.ShowRewardedVideo(OnVideoFinished);
+            _adsService.ShowRewardedAndExecuteOnEnd(REWARDED_VIDEO_PLACEMENT, OnVideoEnded);
+        
+        private void OnVideoEnded(IronSourcePlacement placement, IronSourceAdInfo adInfo) =>
+            _progressService.Progress.CollectedPointsData.Add(placement.getRewardAmount());
 
-        private void OnVideoFinished() =>
-            _progressService.Progress.WorldData.LootData.Add(_adsService.Reward);
-
-        private void RefreshAvailableAd()
+        private void RefreshAvailableAd() 
         {
-            var videoReady = _adsService.IsRewardedVideoReady;
+            var videoReady = _adsService.IsRewardedVideoReady(REWARDED_VIDEO_PLACEMENT);
 
             foreach (GameObject activeObject in _adActiveObjects) 
                 activeObject.SetActive(videoReady);
@@ -49,5 +51,7 @@ namespace UI.Windows.Rewarded
             foreach (GameObject inActiveObject in _adInActiveObjects) 
                 inActiveObject.SetActive(videoReady);
         }
+        
+        
     }
 }

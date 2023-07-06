@@ -31,13 +31,13 @@ namespace Hero
         public override void OnTakeDamage(float damage) =>
             CurrentHP -= damage;
 
-        public void LoadProgress(PlayerProgress progress)
+        public void LoadProgress(Progress progress)
         {
             _stats = progress.HeroStats;
             FireHealthChangeEvent();
         }
 
-        public void UpdateProgress(PlayerProgress progress)
+        public void UpdateProgress(Progress progress)
         {
             progress.HeroStats.CurrentHp = CurrentHP;
             progress.HeroStats.MaxHp = MaxHP;

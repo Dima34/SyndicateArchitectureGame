@@ -1,6 +1,5 @@
 using System;
 using Enemy;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Hero
@@ -18,10 +17,10 @@ namespace Hero
         private readonly int _attackStateHash = Animator.StringToHash("Attack");
         private readonly int _moveStateHash = Animator.StringToHash("Move");
 
-        public event Action<AnimatorState> StateEntered;
-        public event Action<AnimatorState> StateExited;
+        public event Action<AnimatorStateInfo> StateEntered;
+        public event Action<AnimatorStateInfo> StateExited;
 
-        public AnimatorState State { get; set; }
+        public AnimatorStateInfo State { get; set; }
 
         private void Awake() =>
             _animator = GetComponent<Animator>();
@@ -46,13 +45,13 @@ namespace Hero
 
         public void ExitState(int stateHash)
         {
-            AnimatorState stateToExit = StateFor(stateHash);
+            AnimatorStateInfo stateToExit = StateFor(stateHash);
             StateExited?.Invoke(stateToExit);
         }
 
-        private AnimatorState StateFor(int stateHash)
+        private AnimatorStateInfo StateFor(int stateHash)
         {
-            return new AnimatorState();
+            return new AnimatorStateInfo();
         }
     }
 }

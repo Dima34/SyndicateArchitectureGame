@@ -32,6 +32,7 @@ namespace Infrastructure.States
         {
             RegisterStaticDataService();
 
+            RegisterSingle<IGameProcessService>(new GameProcessService());
             RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
             RegisterSingle<IProgressDescriptionService>(
                 new ProgressDescriptionService(GetSingle<IPersistantProgressService>()));
@@ -47,7 +48,7 @@ namespace Infrastructure.States
                 GetSingle<IAssetProvider>(),
                 GetSingle<IStaticDataService>(),
                 GetSingle<IPersistantProgressService>(),
-                GetSingle<IAdsService>()));
+                GetSingle<IAdsService>(), GetSingle<IGameProcessService>()));
             RegisterSingle<IWindowService>(new WindowService(GetSingle<IUIFactory>()));
 
             RegisterGameFactory();

@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+using System.IO;
 using Infrastructure.Data;
-using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.SaveLoad;
 using Infrastructure.Services.StaticData;
 using StaticData;
+using UnityEngine.SceneManagement;
 
 namespace Infrastructure.States
 {
@@ -26,7 +28,7 @@ namespace Infrastructure.States
         public void Enter()
         {
             LoadProgressOrInitNew();
-            var currentLevel = _progressService.Progress.WorldData.PositionOnLevel.LevelName;
+            var currentLevel = _progressService.Progress.WorldData.CurrentLevel;
 
             LoadCurrentLevel(currentLevel);
         }
@@ -36,38 +38,51 @@ namespace Infrastructure.States
             _progressService.Progress = _saveLoadService.LoadProgress() ?? NewProgress();
         }
 
-        private PlayerProgress NewProgress()
+        private Progress NewProgress()
         {
-            var playerProgress = new PlayerProgress();
-
-            SetDefaultLevel(playerProgress);
+            var playerProgress = new Progress();
+            
+            FillLevelData(playerProgress);
+            InitUnearnedPices(playerProgress);
             SetDefaultHeroState(playerProgress);
             
             return playerProgress;
         }
 
-        private void SetDefaultHeroState(PlayerProgress playerProgress)
+        private void FillLevelData(Progress progress)
+        {
+            for( int i = 0; i < SceneManager.sceneCountInBuildSettings; i++ )
+            {
+                string scene = SceneUtility.GetScenePathByBuildIndex(i);
+                var sceneNameWithoutExtension = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
+
+                progress.WorldData.LevelsData.Add(new LevelData(sceneNameWithoutExtension));
+            }
+            
+            progress.WorldData.CurrentLevel = Constants.START_LEVEL_NAME;
+        }
+
+        private static void InitUnearnedPices(Progress playerProgress)
+        {
+            var currentLevel = playerProgress.WorldData.GetCurrentLevelData();
+            currentLevel.UnEarnedLootPieces = new List<LootPieceData>();
+        }
+
+        private void SetDefaultHeroState(Progress progress)
         {
             HeroStaticData staticData = _staticDataService.Hero();
             
-            playerProgress.HeroStats.Damage = staticData.Damage;
-            playerProgress.HeroStats.HitRadius = staticData.HitRadius;
-            playerProgress.HeroStats.HitForwardOffset = staticData.HitForwardOffset;
-            playerProgress.HeroStats.HitObjectPerHit = staticData.HitObjectPerHit;
+            progress.HeroStats.Damage = staticData.Damage;
+            progress.HeroStats.HitRadius = staticData.HitRadius;
+            progress.HeroStats.HitForwardOffset = staticData.HitForwardOffset;
+            progress.HeroStats.HitObjectPerHit = staticData.HitObjectPerHit;
 
-            playerProgress.HeroStats.MaxHp = staticData.MaxHp;
-            playerProgress.HeroStats.CurrentHp = staticData.MaxHp;
+            progress.HeroStats.MaxHp = staticData.MaxHp;
+            progress.HeroStats.CurrentHp = staticData.MaxHp;
         }
 
-        private void SetDefaultLevel(PlayerProgress playerProgress)
-        {
-            playerProgress.WorldData.PositionOnLevel.LevelName = Constants.START_LEVEL_NAME;
-        }
-
-        private void LoadCurrentLevel(string currentLevel)
-        {
+        private void LoadCurrentLevel(string currentLevel) =>
             _stateMachine.Enter<LoadSceneState, string>(currentLevel);
-        }
 
         public void Exit()
         {

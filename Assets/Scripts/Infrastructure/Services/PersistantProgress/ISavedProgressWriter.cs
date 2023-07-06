@@ -4,6 +4,6 @@ namespace Infrastructure.Services.PersistantProgress
 {
     public interface ISavedProgressWriter
     {
-        void UpdateProgress(PlayerProgress progress);
+        void UpdateProgress(Progress progress);
     }
 }

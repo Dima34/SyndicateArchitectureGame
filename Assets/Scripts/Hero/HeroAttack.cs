@@ -12,7 +12,6 @@ namespace Hero
     [RequireComponent(typeof(HeroAnimator))]
     public class HeroAttack : MonoBehaviour, ISavedProgressReader
     {
-        [SerializeField] private CharacterController _characterController;
         [SerializeField] private HeroAnimator _heroAnimator;
         
         private IInputService _inputService;
@@ -34,7 +33,7 @@ namespace Hero
                 Attack();
         }
 
-        public void LoadProgress(PlayerProgress progress)
+        public void LoadProgress(Progress progress)
         {
             _heroStats = progress.HeroStats;
             _hits = new Collider[_heroStats.HitObjectPerHit];

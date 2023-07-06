@@ -11,5 +11,7 @@ namespace Infrastructure
         public const string STATICDATA_HERO_PATH = "StaticData/Hero/Hero";
         public const string STATICDATA_WINDOWS_PATH = "StaticData/UI/WindowsStaticData";
         public const string UIROOT_PATH = "UI/UIRoot";
+        public const string INGAMECONSOLE_PATH = "UI/IngameDebugConsole";
+        public const string LOGGER_PATH = "Common/Logger";
     }
 }

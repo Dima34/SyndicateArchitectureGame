@@ -3,7 +3,6 @@ using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
 using Services.Inputs;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Hero
 {
@@ -39,7 +38,7 @@ namespace Hero
                 movementVector = GetNewMovementVector();
                 SetPlayerForwardDirection(movementVector);
             }
-            
+
             MovePlayer(movementVector);
             AnimatePlayer(movementVector);
             ApplyGravity();
@@ -66,7 +65,7 @@ namespace Hero
 
         private void AnimatePlayer(Vector3 movementVector)
         {
-            if(movementVector.magnitude > 0)
+            if (movementVector.magnitude > 0)
                 _heroAnimator.Move(movementVector.magnitude);
             else
                 _heroAnimator.StopMoving();
@@ -77,27 +76,18 @@ namespace Hero
             _characterController.Move(Physics.gravity);
         }
 
-        public void UpdateProgress(PlayerProgress progress)
+        public void UpdateProgress(Progress progress)
         {
-            progress.WorldData.PositionOnLevel = new PositionOnLevel(
-                CurrentLevelName(),
-                transform.position.AsVectorData());
+            var currentLevelData = progress.WorldData.GetCurrentLevelData();
+            currentLevelData.PositionOnLevel = transform.position.AsVectorData();
         }
 
-        private string CurrentLevelName() =>
-            SceneManager.GetActiveScene().name;
-
-        public void LoadProgress(PlayerProgress progress)
+        public void LoadProgress(Progress progress)
         {
-            var savedLevelName = progress.WorldData.PositionOnLevel.LevelName;
+            Vector3Data positionOnLevel = progress.WorldData.GetCurrentLevelData()?.PositionOnLevel;
 
-            if (CurrentLevelName() == savedLevelName)
-            {
-                Vector3Data savedPosition = progress.WorldData.PositionOnLevel.Position;
-                
-                if (progress.WorldData.PositionOnLevel.Position != null) 
-                    Warp(savedPosition.AsUnityVector());
-            }
+            if (positionOnLevel != null)
+                Warp(positionOnLevel.AsUnityVector());
         }
 
         private void Warp(Vector3 newPosition)

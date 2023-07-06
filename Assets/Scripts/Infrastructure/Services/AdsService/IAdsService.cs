@@ -5,9 +5,11 @@ namespace Infrastructure.States
 {
     public interface IAdsService : IService
     {
-        event Action RewardedVideoReady;
-        bool IsRewardedVideoReady { get; set; }
-        int Reward { get; }
-        void ShowRewardedVideo(Action onVideoFinished);
+        event Action RewardedVideoClosed;
+        bool IsRewardedVideoReady(string placementName);
+        void ShowInterstitialIfReady(string placementName);
+        void ShowRewardedAndExecuteOnEnd(string placementName,
+            Action<IronSourcePlacement, IronSourceAdInfo> executeOnEnd);
+
     }
 }
