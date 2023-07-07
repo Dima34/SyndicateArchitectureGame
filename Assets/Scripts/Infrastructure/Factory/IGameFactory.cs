@@ -8,7 +8,7 @@ namespace Infrastructure.Factory
 {
     public interface IGameFactory : IService
     {
-        GameObject CreateHero(Vector3 instantiatePosition);
+        GameObject CreateHero();
         GameObject CreateHUD();
         GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent);
         LootPiece CreateLoot();

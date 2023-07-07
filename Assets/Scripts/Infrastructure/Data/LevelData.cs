@@ -10,7 +10,7 @@ namespace Infrastructure.Data
         [SerializeField] private string _name;
         [SerializeField] private Vector3Data _positionOnLevel;
         [SerializeField] private List<LootPieceData> _unEarnedLootPieces = new List<LootPieceData>();
-        
+
         public Vector3Data PositionOnLevel
         {
             get => _positionOnLevel;

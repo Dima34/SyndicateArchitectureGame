@@ -16,15 +16,21 @@ namespace Infrastructure.Services.SaveLoad
             _progressDescriptionService = progressDescriptionService;
         }
 
-        public void SaveProgress()
+        public void UpdateAndSaveProgress()
         {
             _progressDescriptionService.UpdateProgress();
-            
-            var jsonedData = GetProgress().ToJson();
+
+            Progress progress = GetProgress();
+            SaveProgress(progress);
+        }
+
+        public void SaveProgress(Progress progress)
+        {
+            var jsonedData = progress.ToJson();
             PlayerPrefs.SetString(Constants.PROGRESS_KEY, jsonedData);
         }
 
-        private Progress GetProgress() =>
+        public Progress GetProgress() =>
             _progressService.Progress;
 
         public Progress LoadProgress()

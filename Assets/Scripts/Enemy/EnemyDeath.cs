@@ -38,7 +38,7 @@ namespace Enemy
 
         private IEnumerator BodyCollector()
         {
-            yield return new WaitForSeconds(Constants.DEAD_BODY_EXIS_TIME);
+            yield return new WaitForSeconds(Constants.DEAD_BODY_EXIST_TIME);
             Destroy(gameObject);
         }
     }

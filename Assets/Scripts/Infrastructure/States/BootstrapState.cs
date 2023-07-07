@@ -1,6 +1,7 @@
 using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.Services;
+using Infrastructure.Services.LevelTransferService;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.Random;
@@ -32,18 +33,22 @@ namespace Infrastructure.States
         {
             RegisterStaticDataService();
 
+            RegisterSingle<IGameStateMachine>(_stateMachine);
             RegisterSingle<IGameProcessService>(new GameProcessService());
             RegisterSingle<IPersistantProgressService>(new PersistantProgressService());
-            RegisterSingle<IProgressDescriptionService>(
-                new ProgressDescriptionService(GetSingle<IPersistantProgressService>()));
+            RegisterSingle<IUnearnedLootService>(new UnearnedLootService());
+            RegisterSingle<IProgressDescriptionService>(new ProgressDescriptionService(GetSingle<IPersistantProgressService>()));
             RegisterSingle<ISaveLoadService>(new SaveLoadService(
-                GetSingle<IPersistantProgressService>(), GetSingle<IProgressDescriptionService>()));
+                GetSingle<IPersistantProgressService>(),
+                GetSingle<IProgressDescriptionService>()));
+            RegisterSingle<ILevelTransferService>(new LevelTransferService(
+                GetSingle<IGameStateMachine>(),
+                GetSingle<ISaveLoadService>()));
             RegisterSingle<IAssetProvider>(new AssetProvider());
             RegisterSingle<IInputService>(GetInputService());
             RegisterSingle<IRandomService>(new RandomService());
-            RegisterSingle<IUnearnedLootService>(new UnearnedLootService());
             RegisterSingle<IAdsService>(new AdsService());
-
+            
             RegisterSingle<IUIFactory>(new UIFactory(
                 GetSingle<IAssetProvider>(),
                 GetSingle<IStaticDataService>(),

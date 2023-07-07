@@ -52,10 +52,8 @@ namespace Hero
             return movementVector;
         }
 
-        private void SetPlayerForwardDirection(Vector3 movementVector)
-        {
+        private void SetPlayerForwardDirection(Vector3 movementVector) =>
             transform.forward = movementVector;
-        }
 
         private void MovePlayer(Vector3 movementVector)
         {

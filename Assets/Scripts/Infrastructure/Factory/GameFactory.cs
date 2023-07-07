@@ -49,8 +49,8 @@ namespace Infrastructure.Factory
         public void CreateLogger() =>
             _logger = InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER_PATH).GetComponent<Logger>();
 
-        public GameObject CreateHero(Vector3 instantiatePosition) { 
-            _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH, instantiatePosition);
+        public GameObject CreateHero() { 
+            _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH);
             
             SetupHeroAttack();
 

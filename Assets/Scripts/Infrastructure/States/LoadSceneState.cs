@@ -8,7 +8,6 @@ using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.StaticData;
 using Logic;
 using StaticData;
-using UI;
 using UI.Elements;
 using UI.Services.Factory;
 using UI.Services.Windows;
@@ -30,12 +29,12 @@ namespace Infrastructure.States
         private readonly IUIFactory _uiFactory;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService)
         {
-            _unearnedLootService = unearnedLootService;
             _staticData = staticData;
             _windowsService = windowsService;
             _uiFactory = uiFactory;
+            _unearnedLootService = unearnedLootService;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -46,13 +45,14 @@ namespace Infrastructure.States
         public void Enter(string payload)
         {
             _loadingCurtain.Show();
-            _progressDescriptionService.CleanupProgressMembersList();
+            _progressDescriptionService.CleanupProgressDataUsersList();
+            RegisterServicesAsDataUsers();
+            
             _sceneLoader.Load(payload, OnLevelLoaded);
         }
 
         private void OnLevelLoaded()
         {
-            RegisterUnearnedLootService();
             InitGameWorld();
 
             _progressDescriptionService.InformProgressDataReaders();
@@ -61,6 +61,11 @@ namespace Infrastructure.States
             _gameStateMachine.Enter<GameLoopState>();
         }
 
+        private void RegisterServicesAsDataUsers()
+        {
+            RegisterUnearnedLootService();
+        }
+        
         private void RegisterUnearnedLootService()
         {
             _progressDescriptionService.RegisterDataReader(_unearnedLootService);
@@ -70,17 +75,20 @@ namespace Infrastructure.States
         private void InitGameWorld()
         {
             CreateLogger();
+            
             InitUIRoot();
             InitUIConsole();
-            InitSpawners();
+
+            var levelData = LevelStaticData();
+            InitSpawners(levelData);
+            
             GameObject hero = CreatePlayer();
+            CameraFollow(hero);
             CreateHUD(hero);
         }
 
-        private void CreateLogger()
-        {
+        private void CreateLogger() =>
             _gameFactory.CreateLogger();
-        }
 
         private void InitUIRoot() =>
             _uiFactory.CreatUIRoot();
@@ -88,24 +96,20 @@ namespace Infrastructure.States
         private void InitUIConsole() =>
             _uiFactory.CreateUIConsole();
 
-        private void InitSpawners()
+        private LevelStaticData LevelStaticData()
         {
-            string sceneKey = SceneManager.GetActiveScene().name;
-            LevelStaticData levelData = _staticData.ForLevel(sceneKey);
-            
-            foreach (var spawnerData in levelData.EnemySpawners)
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            return _staticData.ForLevel(currentSceneName);
+        }
+
+        private void InitSpawners(LevelStaticData levelStaticData)
+        {
+            foreach (var spawnerData in levelStaticData.EnemySpawners)
                 _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
         }
 
-        private GameObject CreatePlayer()
-        {
-            var initialPoint = GameObject.FindGameObjectWithTag(Constants.INITIAL_POINT_TAG);
-            var player = _gameFactory.CreateHero(initialPoint.transform.position);
-
-            CameraFollow(player);
-
-            return player;
-        }
+        private GameObject CreatePlayer() =>
+            _gameFactory.CreateHero();
 
         private static void CameraFollow(GameObject player) =>
             Camera.main
