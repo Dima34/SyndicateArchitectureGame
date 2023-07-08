@@ -14,5 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Dungeon.unity
     guid: a6822328bffba4e57808ce0846afc595
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 5184a042a05d94404ad353fd1686747e, type: 2}
   m_UseUCBPForAssetBundles: 0
