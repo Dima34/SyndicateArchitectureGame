@@ -16,7 +16,17 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: db5dcc856f93d44b28e1539637996ab6
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: dfc8cf67dbc6c4d2e999d983e37e546d
+    m_Address: Lich Enemy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74753670c69804e20903a8d25401c206
+    m_Address: Golem Enemy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d9c67794214e94c459009434ad401db7, type: 2}
   m_SchemaSet:

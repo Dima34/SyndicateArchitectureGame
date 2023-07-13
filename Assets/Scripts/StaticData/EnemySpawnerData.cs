@@ -9,7 +9,6 @@ namespace StaticData
         [SerializeField] private string _id;
         [SerializeField] private MonsterTypeId _monsterType;
         [SerializeField] private Vector3 _position;
-
         
         public string ID => _id;
         public MonsterTypeId MonsterType => _monsterType;

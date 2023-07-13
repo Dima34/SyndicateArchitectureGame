@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Enemy;
 using Hero;
 using Infrastructure.AssetManagement;
@@ -46,8 +47,20 @@ namespace Infrastructure.Factory
             _lootService = lootService;
         }
 
+        public async void WarmUp()
+        {
+            await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT_ASSET_ADDRESS);
+            await _assetProvider.Load<GameObject>(AssetPath.LOOT_ASSET_ADDRESS);
+        }
+
         public void CreateLogger() =>
             _logger = InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER_PATH).GetComponent<Logger>();
+
+        public void CleanUp()
+        {
+            _progressDescriptionService.CleanupProgressDataUsersList();
+            _assetProvider.CleanUp();
+        }
 
         public GameObject CreateHero() { 
             _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH);
@@ -75,15 +88,18 @@ namespace Infrastructure.Factory
         private void ConstructLootCounter(GameObject hud) =>
             hud.GetComponentInChildren<LootCounter>().Construct(_persistantProgressService.Progress.CollectedPointsData);
 
-        public GameObject InstantiateMonster(MonsterTypeId typeId, Transform parent)
+        public async Task<GameObject> InstantiateMonster(MonsterTypeId typeId, Transform parent)
         {
-            MonsterStaticData _monsterData = _staticData.ForMonster(typeId);
-            GameObject monster = Object.Instantiate(_monsterData.Prefab, parent.position, Quaternion.identity, parent);
+            MonsterStaticData monsterData = _staticData.ForMonster(typeId);
 
-            SetupMonsterHealth(monster, _monsterData);
-            SetupMonsterMovement(monster, _monsterData, HeroGameObject.transform);
-            SetupMonsterAttack(monster, _monsterData);
-            SetupMonsterLoot(monster, _monsterData);
+            GameObject prefab = await _assetProvider.Load<GameObject>(monsterData.PrefabReference);
+            
+            GameObject monster = Object.Instantiate(prefab, parent.position, Quaternion.identity, parent);
+
+            SetupMonsterHealth(monster, monsterData);
+            SetupMonsterMovement(monster, monsterData, HeroGameObject.transform);
+            SetupMonsterAttack(monster, monsterData);
+            SetupMonsterLoot(monster, monsterData);
             
             return monster;
         }
@@ -121,9 +137,10 @@ namespace Infrastructure.Factory
             lootSpawner.Construct(this, _randomService);
         }
 
-        public LootPiece CreateLoot()
+        public async Task<LootPiece> CreateLoot()
         {
-            var lootPiece = InstantiateResourceAndRegisterDataUsers(AssetPath.LOOT_RESOURCE_PATH)
+            var prefab = await _assetProvider.Load<GameObject>(AssetPath.LOOT_ASSET_ADDRESS);
+            LootPiece lootPiece = InstantiateResourceAndRegisterDataUsers(prefab)
                 .GetComponent<LootPiece>();
             
             lootPiece.Construct(_lootService, _persistantProgressService.Progress.CollectedPointsData);
@@ -131,18 +148,26 @@ namespace Infrastructure.Factory
             return lootPiece;
         }
 
-        public void CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId)
+        public async Task CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId)
         {
-            SpawnPoint spawnPoint = InstantiateResourceAndRegisterDataUsers(AssetPath.SPAWNER, at)
+            var prefab = await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT_ASSET_ADDRESS);
+            SpawnPoint spawnPoint = InstantiateResourceAndRegisterDataUsers(prefab, at)
                 .GetComponent<SpawnPoint>();
             
             spawnPoint.Construct(this);
             spawnPoint.Initialize(spawnerId, monsterTypeId);
         }
-        
-        private GameObject InstantiateResourceAndRegisterDataUsers(string assetPath, Vector3 at)
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(GameObject prefab, Vector3 at)
         {
-            var gameObject = _assetProvider.InstantiateResourse(assetPath, at);
+            var gameObject = Object.Instantiate(prefab, at, Quaternion.identity);
+            RegisterDataUsers(gameObject);
+            return gameObject;
+        }
+
+        private GameObject InstantiateResourceAndRegisterDataUsers(GameObject prefab)
+        {
+            var gameObject = Object.Instantiate(prefab);
             RegisterDataUsers(gameObject);
             return gameObject;
         }

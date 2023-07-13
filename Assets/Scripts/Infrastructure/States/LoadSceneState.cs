@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Enemy;
 using Hero;
+using Infrastructure.AssetManagement;
 using Infrastructure.Data;
 using Infrastructure.Factory;
 using Infrastructure.Services.ProgressDescription;
@@ -11,8 +12,10 @@ using StaticData;
 using UI.Elements;
 using UI.Services.Factory;
 using UI.Services.Windows;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.States
 {
@@ -27,14 +30,16 @@ namespace Infrastructure.States
         private readonly IStaticDataService _staticData;
         private readonly IWindowService _windowsService;
         private readonly IUIFactory _uiFactory;
+        private IAssetProvider _assetProvider;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService, IAssetProvider assetProvider)
         {
             _staticData = staticData;
             _windowsService = windowsService;
             _uiFactory = uiFactory;
             _unearnedLootService = unearnedLootService;
+            _assetProvider = assetProvider;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -45,18 +50,28 @@ namespace Infrastructure.States
         public void Enter(string payload)
         {
             _loadingCurtain.Show();
-            _progressDescriptionService.CleanupProgressDataUsersList();
+            CleanUpCache();
+            WarmUpDependencies();
+            
             RegisterServicesAsDataUsers();
             
             _sceneLoader.Load(payload, OnLevelLoaded);
         }
 
-        private void OnLevelLoaded()
+        private void WarmUpDependencies() =>
+            _gameFactory.WarmUp();
+
+        private void CleanUpCache()
         {
-            InitGameWorld();
+            _assetProvider.CleanUp();
+            _progressDescriptionService.CleanupProgressDataUsersList();
+        }
+
+        private async void OnLevelLoaded()
+        {
+            await InitGameWorld();
 
             _progressDescriptionService.InformProgressDataReaders();
-            CreateUnearnedLoot();
 
             _gameStateMachine.Enter<GameLoopState>();
         }
@@ -72,7 +87,7 @@ namespace Infrastructure.States
             _progressDescriptionService.RegisterDataWriter(_unearnedLootService);
         }
 
-        private void InitGameWorld()
+        private async Task InitGameWorld()
         {
             CreateLogger();
             
@@ -80,7 +95,9 @@ namespace Infrastructure.States
             InitUIConsole();
 
             var levelData = LevelStaticData();
-            InitSpawners(levelData);
+            
+            await InitSpawners(levelData);
+            await CreateUnearnedLoot();
             
             GameObject hero = CreatePlayer();
             CameraFollow(hero);
@@ -102,10 +119,10 @@ namespace Infrastructure.States
             return _staticData.ForLevel(currentSceneName);
         }
 
-        private void InitSpawners(LevelStaticData levelStaticData)
+        private async Task InitSpawners(LevelStaticData levelStaticData)
         {
             foreach (var spawnerData in levelStaticData.EnemySpawners)
-                _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
+                await _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
         }
 
         private GameObject CreatePlayer() =>
@@ -127,19 +144,18 @@ namespace Infrastructure.States
             hud.GetComponentInChildren<ActorUI>().Construct(heroHealth);
         }
 
-        private void CreateUnearnedLoot()
+        private async Task CreateUnearnedLoot()
         {
             List<LootPieceData> unearnedLootList = _unearnedLootService.GetAll();
-            
-            List<LootPieceData> ListToIterate = unearnedLootList.ToList();
-            unearnedLootList.Clear();          
 
             // Copy the list because inside of cycle we add elements inside list which we iterate
-            foreach (var lootItem in ListToIterate.ToList())
+            foreach (var lootItem in unearnedLootList.ToList())
             {
-                LootPiece loot = _gameFactory.CreateLoot();
+                LootPiece loot = await _gameFactory.CreateLoot();
                 loot.Initialize(lootItem.Loot, lootItem.Position.AsUnityVector());
             }
+            
+            unearnedLootList.Clear();
         }
 
         public void Exit() =>

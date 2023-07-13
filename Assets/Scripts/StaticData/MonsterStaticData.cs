@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+
 
 namespace StaticData
 {
@@ -19,7 +21,7 @@ namespace StaticData
         [Range(1f, 40f)] [SerializeField] private int _minLoot;
         [Range(1f, 40f)] [SerializeField] private int _maxLoot;
         
-        [SerializeField] private GameObject _prefab;
+        [SerializeField] private AssetReferenceGameObject prefabReferenceReferance;
 
         public MonsterTypeId TypeId
         {
@@ -51,10 +53,10 @@ namespace StaticData
             set => _cleverage = value;
         }
 
-        public GameObject Prefab
+        public AssetReferenceGameObject PrefabReference
         {
-            get => _prefab;
-            set => _prefab = value;
+            get => prefabReferenceReferance;
+            set => prefabReferenceReferance = value;
         }
 
         public float Speed

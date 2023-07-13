@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
@@ -32,7 +33,8 @@ namespace Infrastructure
                     GetSingle<IStaticDataService>(),
                     GetSingle<IWindowService>(),
                     GetSingle<IUIFactory>(),
-                    GetSingle<IUnearnedLootService>()),
+                    GetSingle<IUnearnedLootService>(),
+                    GetSingle<IAssetProvider>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
                     GetSingle<IPersistantProgressService>(),
                     GetSingle<ISaveLoadService>(),

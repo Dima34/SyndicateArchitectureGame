@@ -44,7 +44,7 @@ namespace Infrastructure.States
             RegisterSingle<ILevelTransferService>(new LevelTransferService(
                 GetSingle<IGameStateMachine>(),
                 GetSingle<ISaveLoadService>()));
-            RegisterSingle<IAssetProvider>(new AssetProvider());
+            RegisterAssetProvider();
             RegisterSingle<IInputService>(GetInputService());
             RegisterSingle<IRandomService>(new RandomService());
             RegisterSingle<IAdsService>(new AdsService());
@@ -57,6 +57,14 @@ namespace Infrastructure.States
             RegisterSingle<IWindowService>(new WindowService(GetSingle<IUIFactory>()));
 
             RegisterGameFactory();
+        }
+
+        private void RegisterAssetProvider()
+        {
+            var newAssetProvider = new AssetProvider();
+            newAssetProvider.Initialize();
+            
+            RegisterSingle<IAssetProvider>(newAssetProvider);
         }
 
         private void RegisterSingle<T>(T objectToRegister) where T : IService =>

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e91cf6dc36407fb0799d38a59b3e4e, type: 3}
   m_Name: Dungeon
   m_EditorClassIdentifier: 
-  LevelKey: 
+  LevelKey: Dungeon
   EnemySpawners: []
-  InitialHeroPosition: {x: 0, y: 0, z: 0}
+  InitialHeroPosition: {x: -37.29, y: 28, z: -5.04}

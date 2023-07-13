@@ -26,7 +26,7 @@ public class LevelStaticDataEditor : UnityEditor.Editor
             levelData.LevelKey = SceneManager.GetActiveScene().name;
             levelData.InitialHeroPosition = GameObject.FindGameObjectWithTag(Constants.INITIAL_POINT_TAG).transform.position;
             
-            EditorUtility.SetDirty(this);
+            EditorUtility.SetDirty(levelData);
         }
     }
 }

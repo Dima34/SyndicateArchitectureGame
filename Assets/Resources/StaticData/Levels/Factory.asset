@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e91cf6dc36407fb0799d38a59b3e4e, type: 3}
   m_Name: Factory
   m_EditorClassIdentifier: 
-  LevelKey: Main
+  LevelKey: Factory
   EnemySpawners:
-  - _id: Main_806474be-d8a3-466d-be18-d423be0b82e5
-    _monsterType: 0
-    _position: {x: -11.620001, y: 5.65, z: 26.6}
   - _id: SpawnMarker_327557f0-b3f1-4185-aa43-686184a27026
     _monsterType: 0
     _position: {x: 3.73, y: 5.65, z: 13.89}
-  - _id: Main_be3b377f-a852-4754-ba62-c7b22648128f
-    _monsterType: 0
-    _position: {x: -7.53, y: 5.65, z: 18.85}
   - _id: Main_c9f3945c-4893-418d-9622-36a272bc954e
-    _monsterType: 0
+    _monsterType: 2
     _position: {x: -3.12, y: 5.65, z: 34.25}
+  - _id: Main_be3b377f-a852-4754-ba62-c7b22648128f
+    _monsterType: 2
+    _position: {x: -7.53, y: 5.65, z: 18.85}
+  - _id: Main_806474be-d8a3-466d-be18-d423be0b82e5
+    _monsterType: 0
+    _position: {x: -11.620001, y: 5.65, z: 26.6}
+  InitialHeroPosition: {x: -3.7, y: 7.02, z: 12.98}
