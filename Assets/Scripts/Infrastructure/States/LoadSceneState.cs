@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Enemy;
 using Hero;
 using Infrastructure.AssetManagement;
 using Infrastructure.Data;
 using Infrastructure.Factory;
+using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.StaticData;
 using Logic;
@@ -31,15 +33,17 @@ namespace Infrastructure.States
         private readonly IWindowService _windowsService;
         private readonly IUIFactory _uiFactory;
         private IAssetProvider _assetProvider;
+        private IPersistantProgressService _progresService;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService, IAssetProvider assetProvider)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService, IAssetProvider assetProvider, IPersistantProgressService progresService)
         {
             _staticData = staticData;
             _windowsService = windowsService;
             _uiFactory = uiFactory;
             _unearnedLootService = unearnedLootService;
             _assetProvider = assetProvider;
+            _progresService = progresService;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -70,11 +74,14 @@ namespace Infrastructure.States
         private async void OnLevelLoaded()
         {
             await InitGameWorld();
-
-            _progressDescriptionService.InformProgressDataReaders();
-
+            
+            InformDataReaders();
+            
             _gameStateMachine.Enter<GameLoopState>();
         }
+
+        private void InformDataReaders() =>
+            _progressDescriptionService.InformProgressDataReaders();
 
         private void RegisterServicesAsDataUsers()
         {
@@ -83,7 +90,6 @@ namespace Infrastructure.States
         
         private void RegisterUnearnedLootService()
         {
-            _progressDescriptionService.RegisterDataReader(_unearnedLootService);
             _progressDescriptionService.RegisterDataWriter(_unearnedLootService);
         }
 
@@ -91,24 +97,38 @@ namespace Infrastructure.States
         {
             CreateLogger();
             
-            InitUIRoot();
+            await InitUIRoot();
             InitUIConsole();
 
             var levelData = LevelStaticData();
             
+            GameObject cameraGO = await CreateCamera();
+            GameObject hero = await CreatePlayer();
+            CameraFollow(hero, cameraGO);
+            
             await InitSpawners(levelData);
             await CreateUnearnedLoot();
-            
-            GameObject hero = CreatePlayer();
-            CameraFollow(hero);
-            CreateHUD(hero);
+
+            await CreateHUD(hero);
+        }
+
+        private async Task<GameObject> CreateCamera()
+        {
+            GameObject cameraGameObject = await _assetProvider.Load<GameObject>(AssetPath.CAMERA);
+            return Object.Instantiate(cameraGameObject);
+        }
+
+        private static void CameraFollow(GameObject hero, GameObject cameraGO)
+        {
+            CameraFollow cameraFollow = cameraGO.GetComponent<CameraFollow>();
+            cameraFollow.Follow(hero);
         }
 
         private void CreateLogger() =>
             _gameFactory.CreateLogger();
 
-        private void InitUIRoot() =>
-            _uiFactory.CreatUIRoot();
+        private async Task InitUIRoot() =>
+            await _uiFactory.CreatUIRoot();
 
         private void InitUIConsole() =>
             _uiFactory.CreateUIConsole();
@@ -125,17 +145,13 @@ namespace Infrastructure.States
                 await _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
         }
 
-        private GameObject CreatePlayer() =>
-            _gameFactory.CreateHero();
+        private async Task<GameObject> CreatePlayer() =>
+            await _gameFactory.CreateHero();
+        
 
-        private static void CameraFollow(GameObject player) =>
-            Camera.main
-                .GetComponent<CameraFollow>()
-                .Follow(player);
-
-        private void CreateHUD(GameObject hero)
+        private async Task CreateHUD(GameObject hero)
         {
-            GameObject hud = _gameFactory.CreateHUD();
+            GameObject hud = await _gameFactory.CreateHUD();
             
             foreach (OpenWindowButton openWindowButton in hud.GetComponentsInChildren<OpenWindowButton>())
                 openWindowButton.Construct(_windowsService);
@@ -146,7 +162,8 @@ namespace Infrastructure.States
 
         private async Task CreateUnearnedLoot()
         {
-            List<LootPieceData> unearnedLootList = _unearnedLootService.GetAll();
+            List<LootPieceData> unearnedLootList =
+                _progresService.Progress.WorldData.GetCurrentLevelData().UnEarnedLootPieces;
 
             // Copy the list because inside of cycle we add elements inside list which we iterate
             foreach (var lootItem in unearnedLootList.ToList())

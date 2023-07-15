@@ -30,10 +30,8 @@ namespace Infrastructure.Factory
         private readonly IPersistantProgressService _persistantProgressService;
         private IProgressDescriptionService _progressDescriptionService;
         private IUnearnedLootService _lootService;
-        private Logger _logger;
 
         public GameObject HeroGameObject => _heroGameObject;
-        public Logger Logger => _logger;
 
         public GameFactory(IAssetProvider assetProvider, IStaticDataService staticData, IInputService inputService,
             IRandomService randomService, IPersistantProgressService progressService, IProgressDescriptionService progressDescriptionService, IUnearnedLootService lootService)
@@ -49,12 +47,12 @@ namespace Infrastructure.Factory
 
         public async void WarmUp()
         {
-            await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT_ASSET_ADDRESS);
-            await _assetProvider.Load<GameObject>(AssetPath.LOOT_ASSET_ADDRESS);
+            await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT);
+            await _assetProvider.Load<GameObject>(AssetPath.LOOT);
         }
 
         public void CreateLogger() =>
-            _logger = InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER_PATH).GetComponent<Logger>();
+            InstantiateResourceAndRegisterDataUsers(AssetPath.LOGGER).GetComponent<Logger>();
 
         public void CleanUp()
         {
@@ -62,8 +60,9 @@ namespace Infrastructure.Factory
             _assetProvider.CleanUp();
         }
 
-        public GameObject CreateHero() { 
-            _heroGameObject = InstantiateResourceAndRegisterDataUsers(AssetPath.HERO_PATH);
+        public async Task<GameObject> CreateHero() { 
+            var prefab = await _assetProvider.Load<GameObject>(AssetPath.HERO);
+            _heroGameObject = InstantiateResourceAndRegisterDataUsers(prefab);
             
             SetupHeroAttack();
 
@@ -76,9 +75,10 @@ namespace Infrastructure.Factory
             heroAttack.Construct(_inputService);
         }
 
-        public GameObject CreateHUD()
+        public async Task<GameObject> CreateHUD()
         {
-            var hud = InstantiateResourceAndRegisterDataUsers(AssetPath.HUD_PATH);
+            GameObject gameObject = await _assetProvider.Load<GameObject>(AssetPath.HUD);
+            GameObject hud = InstantiateResourceAndRegisterDataUsers(gameObject);
 
             ConstructLootCounter(hud);
             
@@ -139,7 +139,7 @@ namespace Infrastructure.Factory
 
         public async Task<LootPiece> CreateLoot()
         {
-            var prefab = await _assetProvider.Load<GameObject>(AssetPath.LOOT_ASSET_ADDRESS);
+            var prefab = await _assetProvider.Load<GameObject>(AssetPath.LOOT);
             LootPiece lootPiece = InstantiateResourceAndRegisterDataUsers(prefab)
                 .GetComponent<LootPiece>();
             
@@ -150,7 +150,7 @@ namespace Infrastructure.Factory
 
         public async Task CreateSpawner(Vector3 at, string spawnerId, MonsterTypeId monsterTypeId)
         {
-            var prefab = await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT_ASSET_ADDRESS);
+            var prefab = await _assetProvider.Load<GameObject>(AssetPath.SPAWNPOINT);
             SpawnPoint spawnPoint = InstantiateResourceAndRegisterDataUsers(prefab, at)
                 .GetComponent<SpawnPoint>();
             

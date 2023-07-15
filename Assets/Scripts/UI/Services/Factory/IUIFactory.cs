@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Infrastructure.Services;
 
 namespace UI.Services.Factory
@@ -5,7 +6,7 @@ namespace UI.Services.Factory
     public interface IUIFactory : IService
     {
         void CreateShop();
-        void CreatUIRoot();
+        Task CreatUIRoot();
         void CreateUIConsole();
     }
 }
