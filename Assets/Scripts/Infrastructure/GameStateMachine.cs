@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.Services;
 using Infrastructure.Services.PersistantProgress;
@@ -14,7 +15,7 @@ using UI.Services.Windows;
 
 namespace Infrastructure
 {
-    public class GameStateMachine
+    public class GameStateMachine : IGameStateMachine
     {
         private Dictionary<Type, IExitableState> _states;
         private IExitableState _activeState;
@@ -27,18 +28,23 @@ namespace Infrastructure
                 [typeof(LoadSceneState)] = new LoadSceneState(this, 
                     sceneLoder, 
                     loadingCurtain, 
-                    services.GetSingle<IGameFactory>(),
-                    services.GetSingle<IProgressDescriptionService>(),
-                    services.GetSingle<IUnearnedLootService>(),
-                    services.GetSingle<IStaticDataService>(),
-                    services.GetSingle<IWindowService>(),
-                    services.GetSingle<IUIFactory>()),
+                    GetSingle<IGameFactory>(),
+                    GetSingle<IProgressDescriptionService>(),
+                    GetSingle<IStaticDataService>(),
+                    GetSingle<IWindowService>(),
+                    GetSingle<IUIFactory>(),
+                    GetSingle<IUnearnedLootService>(),
+                    GetSingle<IAssetProvider>(),
+                    GetSingle<IPersistantProgressService>()),
                 [typeof(LoadProgressState)] = new LoadProgressState(this, 
-                    services.GetSingle<IPersistantProgressService>(),
-                    services.GetSingle<ISaveLoadService>(),
-                    services.GetSingle<IStaticDataService>()),
+                    GetSingle<IPersistantProgressService>(),
+                    GetSingle<ISaveLoadService>(),
+                    GetSingle<IStaticDataService>()),
                 [typeof(GameLoopState)] = new GameLoopState(this),
             };
+            
+            T GetSingle<T>() where T : IService =>
+                services.GetSingle<T>();
         }
 
         public void Enter<TState>() where TState : class, IState
@@ -53,7 +59,7 @@ namespace Infrastructure
             state.Enter(payload);
         }
 
-        private TState ChangeActiveAndGetNewState<TState>() where TState : class, IExitableState
+        public TState ChangeActiveAndGetNewState<TState>() where TState : class, IExitableState
         {
             _activeState?.Exit();
             TState state = GetState<TState>();
@@ -61,7 +67,7 @@ namespace Infrastructure
             return state;
         }
 
-        private TState GetState<TState>() where TState : class => 
+        public TState GetState<TState>() where TState : class => 
             _states[typeof(TState)] as TState;
     }
 }

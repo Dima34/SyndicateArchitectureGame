@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Enemy;
 using Infrastructure.Data;
 using Infrastructure.Factory;
@@ -33,9 +35,9 @@ namespace Logic.EnemySpawners
                 Spawn();
         }
 
-        private void Spawn()
+        private async void Spawn()
         {
-            GameObject monster = _gameFactory.InstantiateMonster(_monsterTypeId, transform);
+            GameObject monster = await _gameFactory.InstantiateMonster(_monsterTypeId, transform);
             monster.GetComponent<EnemyDeath>().Happend += Slain;
         }
 

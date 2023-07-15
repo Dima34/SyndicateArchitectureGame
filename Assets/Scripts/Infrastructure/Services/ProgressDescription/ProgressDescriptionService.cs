@@ -10,13 +10,15 @@ namespace Infrastructure.Services.ProgressDescription
 
         private IPersistantProgressService _persistantProgressService;
 
-        public ProgressDescriptionService(IPersistantProgressService persistantProgressService) =>
-            _persistantProgressService = persistantProgressService;
-
-        public void CleanupProgressMembersList()
+        public ProgressDescriptionService(IPersistantProgressService persistantProgressService)
         {
-            _progressReaders.Clear();
-            _progressWriters.Clear();
+            _persistantProgressService = persistantProgressService;
+        }
+
+        public void CleanupProgressDataUsersList()
+        {
+            _progressReaders = new List<ISavedProgressReader>();
+            _progressWriters = new List<ISavedProgressWriter>();
         }
 
         public void InformProgressDataReaders()
@@ -30,12 +32,6 @@ namespace Infrastructure.Services.ProgressDescription
         
         public void RegisterDataWriter(ISavedProgressWriter progressWriter) =>
             _progressWriters.Add(progressWriter);
-        
-        public void UnRegisterDataReader(ISavedProgressReader progressReader) =>
-            _progressReaders.Remove(progressReader);
-        
-        public void UnRegisterDataWriter(ISavedProgressWriter progressWriter) =>
-            _progressWriters.Remove(progressWriter);
 
         public void UpdateProgress()
         {

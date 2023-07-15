@@ -1,19 +1,23 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Enemy;
 using Hero;
+using Infrastructure.AssetManagement;
 using Infrastructure.Data;
 using Infrastructure.Factory;
+using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
 using Infrastructure.Services.StaticData;
 using Logic;
 using StaticData;
-using UI;
 using UI.Elements;
 using UI.Services.Factory;
 using UI.Services.Windows;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Task = System.Threading.Tasks.Task;
 
 namespace Infrastructure.States
 {
@@ -28,14 +32,18 @@ namespace Infrastructure.States
         private readonly IStaticDataService _staticData;
         private readonly IWindowService _windowsService;
         private readonly IUIFactory _uiFactory;
+        private IAssetProvider _assetProvider;
+        private IPersistantProgressService _progresService;
 
         public LoadSceneState(GameStateMachine gameStateMachine, SceneLoader sceneLoader, LoadingCurtain loadingCurtain,
-            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IUnearnedLootService unearnedLootService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory)
+            IGameFactory gameFactory, IProgressDescriptionService progressDescriptionService, IStaticDataService staticData, IWindowService windowsService, IUIFactory uiFactory, IUnearnedLootService unearnedLootService, IAssetProvider assetProvider, IPersistantProgressService progresService)
         {
-            _unearnedLootService = unearnedLootService;
             _staticData = staticData;
             _windowsService = windowsService;
             _uiFactory = uiFactory;
+            _unearnedLootService = unearnedLootService;
+            _assetProvider = assetProvider;
+            _progresService = progresService;
             _progressDescriptionService = progressDescriptionService;
             _loadingCurtain = loadingCurtain;
             _gameStateMachine = gameStateMachine;
@@ -46,75 +54,104 @@ namespace Infrastructure.States
         public void Enter(string payload)
         {
             _loadingCurtain.Show();
-            _progressDescriptionService.CleanupProgressMembersList();
+            CleanUpCache();
+            WarmUpDependencies();
+            
+            RegisterServicesAsDataUsers();
+            
             _sceneLoader.Load(payload, OnLevelLoaded);
         }
 
-        private void OnLevelLoaded()
+        private void WarmUpDependencies() =>
+            _gameFactory.WarmUp();
+
+        private void CleanUpCache()
         {
-            RegisterUnearnedLootService();
-            InitGameWorld();
+            _assetProvider.CleanUp();
+            _progressDescriptionService.CleanupProgressDataUsersList();
+        }
 
-            _progressDescriptionService.InformProgressDataReaders();
-            CreateUnearnedLoot();
-
+        private async void OnLevelLoaded()
+        {
+            await InitGameWorld();
+            
+            InformDataReaders();
+            
             _gameStateMachine.Enter<GameLoopState>();
         }
 
+        private void InformDataReaders() =>
+            _progressDescriptionService.InformProgressDataReaders();
+
+        private void RegisterServicesAsDataUsers()
+        {
+            RegisterUnearnedLootService();
+        }
+        
         private void RegisterUnearnedLootService()
         {
-            _progressDescriptionService.RegisterDataReader(_unearnedLootService);
             _progressDescriptionService.RegisterDataWriter(_unearnedLootService);
         }
 
-        private void InitGameWorld()
+        private async Task InitGameWorld()
         {
             CreateLogger();
-            InitUIRoot();
+            
+            await InitUIRoot();
             InitUIConsole();
-            InitSpawners();
-            GameObject hero = CreatePlayer();
-            CreateHUD(hero);
+
+            var levelData = LevelStaticData();
+            
+            GameObject cameraGO = await CreateCamera();
+            GameObject hero = await CreatePlayer();
+            CameraFollow(hero, cameraGO);
+            
+            await InitSpawners(levelData);
+            await CreateUnearnedLoot();
+
+            await CreateHUD(hero);
         }
 
-        private void CreateLogger()
+        private async Task<GameObject> CreateCamera()
         {
-            _gameFactory.CreateLogger();
+            GameObject cameraGameObject = await _assetProvider.Load<GameObject>(AssetPath.CAMERA);
+            return Object.Instantiate(cameraGameObject);
         }
 
-        private void InitUIRoot() =>
-            _uiFactory.CreatUIRoot();
+        private static void CameraFollow(GameObject hero, GameObject cameraGO)
+        {
+            CameraFollow cameraFollow = cameraGO.GetComponent<CameraFollow>();
+            cameraFollow.Follow(hero);
+        }
+
+        private void CreateLogger() =>
+            _gameFactory.CreateLogger();
+
+        private async Task InitUIRoot() =>
+            await _uiFactory.CreatUIRoot();
 
         private void InitUIConsole() =>
             _uiFactory.CreateUIConsole();
 
-        private void InitSpawners()
+        private LevelStaticData LevelStaticData()
         {
-            string sceneKey = SceneManager.GetActiveScene().name;
-            LevelStaticData levelData = _staticData.ForLevel(sceneKey);
-            
-            foreach (var spawnerData in levelData.EnemySpawners)
-                _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            return _staticData.ForLevel(currentSceneName);
         }
 
-        private GameObject CreatePlayer()
+        private async Task InitSpawners(LevelStaticData levelStaticData)
         {
-            var initialPoint = GameObject.FindGameObjectWithTag(Constants.INITIAL_POINT_TAG);
-            var player = _gameFactory.CreateHero(initialPoint.transform.position);
-
-            CameraFollow(player);
-
-            return player;
+            foreach (var spawnerData in levelStaticData.EnemySpawners)
+                await _gameFactory.CreateSpawner(spawnerData.Position, spawnerData.ID, spawnerData.MonsterType);
         }
 
-        private static void CameraFollow(GameObject player) =>
-            Camera.main
-                .GetComponent<CameraFollow>()
-                .Follow(player);
+        private async Task<GameObject> CreatePlayer() =>
+            await _gameFactory.CreateHero();
+        
 
-        private void CreateHUD(GameObject hero)
+        private async Task CreateHUD(GameObject hero)
         {
-            GameObject hud = _gameFactory.CreateHUD();
+            GameObject hud = await _gameFactory.CreateHUD();
             
             foreach (OpenWindowButton openWindowButton in hud.GetComponentsInChildren<OpenWindowButton>())
                 openWindowButton.Construct(_windowsService);
@@ -123,19 +160,19 @@ namespace Infrastructure.States
             hud.GetComponentInChildren<ActorUI>().Construct(heroHealth);
         }
 
-        private void CreateUnearnedLoot()
+        private async Task CreateUnearnedLoot()
         {
-            List<LootPieceData> unearnedLootList = _unearnedLootService.GetAll();
-            
-            List<LootPieceData> ListToIterate = unearnedLootList.ToList();
-            unearnedLootList.Clear();          
+            List<LootPieceData> unearnedLootList =
+                _progresService.Progress.WorldData.GetCurrentLevelData().UnEarnedLootPieces;
 
             // Copy the list because inside of cycle we add elements inside list which we iterate
-            foreach (var lootItem in ListToIterate.ToList())
+            foreach (var lootItem in unearnedLootList.ToList())
             {
-                LootPiece loot = _gameFactory.CreateLoot();
+                LootPiece loot = await _gameFactory.CreateLoot();
                 loot.Initialize(lootItem.Loot, lootItem.Position.AsUnityVector());
             }
+            
+            unearnedLootList.Clear();
         }
 
         public void Exit() =>

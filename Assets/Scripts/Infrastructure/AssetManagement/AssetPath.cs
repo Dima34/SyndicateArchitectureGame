@@ -2,16 +2,14 @@ namespace Infrastructure
 {
     public struct AssetPath
     {
-        public const string HERO_PATH = "Hero/Hero";
-        public const string HUD_PATH = "UI/HUD";
-        public const string SPAWNER = "Enemies/SpawnPoint";
-        public const string LOOT_RESOURCE_PATH = "Loot/Loot";
-        public const string STATICDATA_MONSTERS_PATH = "StaticData/Monsters";
-        public const string STATICDATA_LEVELS_PATH = "StaticData/Levels";
-        public const string STATICDATA_HERO_PATH = "StaticData/Hero/Hero";
-        public const string STATICDATA_WINDOWS_PATH = "StaticData/UI/WindowsStaticData";
-        public const string UIROOT_PATH = "UI/UIRoot";
-        public const string INGAMECONSOLE_PATH = "UI/IngameDebugConsole";
-        public const string LOGGER_PATH = "Common/Logger";
+        public const string HERO = "Hero";
+        public const string HUD = "HUD";
+        public const string SPAWNPOINT = "SpawnPoint";
+        public const string LOOT = "Loot";
+        public const string UIROOT = "UIRoot";
+        public const string CAMERA = "MainCamera";
+
+        public const string INGAMECONSOLE = "UI/IngameDebugConsole";
+        public const string LOGGER = "Common/Logger";
     }
 }

@@ -1,4 +1,6 @@
 using System.Linq;
+using Infrastructure;
+using Infrastructure.Logic;
 using Logic.EnemySpawners;
 using StaticData;
 using UnityEditor;
@@ -22,6 +24,9 @@ public class LevelStaticDataEditor : UnityEditor.Editor
                 .ToList();
 
             levelData.LevelKey = SceneManager.GetActiveScene().name;
+            levelData.InitialHeroPosition = GameObject.FindGameObjectWithTag(Constants.INITIAL_POINT_TAG).transform.position;
+            
+            EditorUtility.SetDirty(levelData);
         }
     }
 }

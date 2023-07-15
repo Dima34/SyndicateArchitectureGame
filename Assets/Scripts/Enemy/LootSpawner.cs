@@ -30,9 +30,9 @@ namespace Enemy
             _randomService = randomService;
         }
 
-        private void SpawnLoot()
+        private async void SpawnLoot()
         {
-            LootPiece lootGameObject = _factory.CreateLoot();
+            LootPiece lootGameObject = await _factory.CreateLoot();
             lootGameObject.Initialize(GenerateLoot(), GetSpawnPosition());
         }
 

@@ -52,7 +52,6 @@ namespace Enemy
             AddLootToWorldData();
             HideSkull();
             ShowDeathPopup(_loot);
-            RemoveFromLootService();
             StartSelfDestroyCoroutine();
         }
 
@@ -73,8 +72,6 @@ namespace Enemy
             _pickupTextPopup.SetActive(true);
         }
 
-        private void RemoveFromLootService() =>
-            _lootService.RemoveIfExists(_id);
         private void StartSelfDestroyCoroutine() =>
             StartCoroutine(DestroySelf());
 
@@ -82,11 +79,6 @@ namespace Enemy
         {
             yield return new WaitForSeconds(_destroyDelay);
             Destroy(gameObject);
-        }
-
-        private void OnDestroy()
-        {
-            RemoveFromLootService();
         }
     }
 }

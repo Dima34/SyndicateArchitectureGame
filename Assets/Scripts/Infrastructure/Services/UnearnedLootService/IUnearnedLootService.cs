@@ -6,11 +6,8 @@ using UnityEngine;
 
 namespace Infrastructure.States
 {
-    public interface IUnearnedLootService : IService, ISavedProgress
+    public interface IUnearnedLootService : IService, ISavedProgressWriter
     {
-        void RemoveIfExists(string id);
         void Add(string id, Vector3 position, Loot loot);
-        List<LootPieceData> GetAll();
-        bool Contains(string id);
     }
 }

@@ -5,7 +5,9 @@ namespace Infrastructure.Services.SaveLoad
     public interface ISaveLoadService : IService
     {
         Progress LoadProgress();
-        void SaveProgress();
+        void UpdateAndSaveProgress();
+        void SaveProgress(Progress progress);
+        Progress GetProgress();
     }
     
 }

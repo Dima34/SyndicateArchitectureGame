@@ -24,19 +24,19 @@ namespace Infrastructure.Services.StaticData
         }
         
         private void LoadMonsters() =>
-            _monsters = TryLoadAll<MonsterStaticData>(AssetPath.STATICDATA_MONSTERS_PATH)?.ToDictionary(x => x.TypeId);
+            _monsters = TryLoadAll<MonsterStaticData>(StaticDataPath.STATICDATA_MONSTERS_PATH)?.ToDictionary(x => x.TypeId);
         
         private void LoadLevels() =>
-            _levels = TryLoadAll<LevelStaticData>(AssetPath.STATICDATA_LEVELS_PATH)
+            _levels = TryLoadAll<LevelStaticData>(StaticDataPath.STATICDATA_LEVELS_PATH)
                 .ToDictionary(x => x.LevelKey);
         
         private void LoadWindowsData() =>
-            _windows = TryLoad<WindowsStaticData>(AssetPath.STATICDATA_WINDOWS_PATH)
+            _windows = TryLoad<WindowsStaticData>(StaticDataPath.STATICDATA_WINDOWS_PATH)
                 .Configs
                 .ToDictionary(x=> x.WindowID, x=>x);
 
         public void LoadHero() =>
-            _hero = TryLoad<HeroStaticData>(AssetPath.STATICDATA_HERO_PATH);
+            _hero = TryLoad<HeroStaticData>(StaticDataPath.STATICDATA_HERO_PATH);
 
         public MonsterStaticData ForMonster(MonsterTypeId monsterTypeId) =>
             _monsters.TryGetValue(monsterTypeId, out MonsterStaticData staticData) ? staticData : null;

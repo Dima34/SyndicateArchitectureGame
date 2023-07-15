@@ -17,7 +17,7 @@ namespace Logic
 
         private void OnTriggerEnter(Collider other)
         {
-            _saveloadService.SaveProgress();
+            _saveloadService.UpdateAndSaveProgress();
             Debug.LogWarning("Progress saved!");
             gameObject.SetActive(false);
         }

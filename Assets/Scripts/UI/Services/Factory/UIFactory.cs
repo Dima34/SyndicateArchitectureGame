@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Infrastructure;
 using Infrastructure.AssetManagement;
 using Infrastructure.Services.PersistantProgress;
@@ -27,9 +28,12 @@ namespace UI.Services.Factory
             _adsService = adsService;
             _gameProcessService = gameProcessService;
         }
-
-        public void CreatUIRoot() =>
-            _uiRoot = _assetProvider.InstantiateResourse( AssetPath.UIROOT_PATH).transform;
+        
+        public async Task CreatUIRoot()
+        {
+            GameObject gameObject = await _assetProvider.Load<GameObject>(AssetPath.UIROOT);
+            _uiRoot = Object.Instantiate(gameObject).transform;
+        }
 
         public void CreateShop()
         {
@@ -40,6 +44,6 @@ namespace UI.Services.Factory
         }
 
         public void CreateUIConsole() =>
-            _assetProvider.InstantiateResourse(AssetPath.INGAMECONSOLE_PATH);
+            _assetProvider.InstantiateResourse(AssetPath.INGAMECONSOLE);
     }
 }

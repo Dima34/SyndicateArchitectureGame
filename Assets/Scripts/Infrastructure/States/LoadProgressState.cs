@@ -53,10 +53,14 @@ namespace Infrastructure.States
         {
             for( int i = 0; i < SceneManager.sceneCountInBuildSettings; i++ )
             {
-                string scene = SceneUtility.GetScenePathByBuildIndex(i);
                 var sceneNameWithoutExtension = Path.GetFileNameWithoutExtension(SceneUtility.GetScenePathByBuildIndex(i));
+                LevelData newLevelData = new LevelData(sceneNameWithoutExtension);
+                
+                var staticLevelData = _staticDataService.ForLevel(sceneNameWithoutExtension);
+                if (staticLevelData != null)
+                    newLevelData.PositionOnLevel = staticLevelData.InitialHeroPosition.AsVectorData();
 
-                progress.WorldData.LevelsData.Add(new LevelData(sceneNameWithoutExtension));
+                progress.WorldData.LevelsData.Add(newLevelData);
             }
             
             progress.WorldData.CurrentLevel = Constants.START_LEVEL_NAME;
