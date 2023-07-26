@@ -16,7 +16,7 @@ namespace Infrastructure.AssetManagement
             Addressables.InitializeAsync();
         }
 
-        public async Task<T> Load<T>(AssetReference assetReference) where T : class
+        public async Task<T>  Load<T>(AssetReference assetReference) where T : class
         {
             if (_compleatedCache.TryGetValue(assetReference.AssetGUID, out AsyncOperationHandle compleatedHandle))
                 return compleatedHandle.Result as T;
@@ -70,6 +70,12 @@ namespace Infrastructure.AssetManagement
             _compleatedCache.Clear();
             _handles.Clear();
         }
+
+        public Task<GameObject> Instantiate(string adress) =>
+            Addressables.InstantiateAsync(adress).Task;
+        
+        public Task<GameObject> InstantiateInParent(string adress, Transform parent) =>
+            Addressables.InstantiateAsync(adress, parent).Task;
 
         public GameObject InstantiateResourse(string path)
         {

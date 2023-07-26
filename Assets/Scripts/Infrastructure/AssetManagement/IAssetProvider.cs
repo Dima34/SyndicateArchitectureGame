@@ -12,5 +12,7 @@ namespace Infrastructure.AssetManagement
         Task<T> Load<T>(string assetPath) where T : class;
         void CleanUp();
         void Initialize();
+        Task<GameObject> Instantiate(string adress);
+        Task<GameObject> InstantiateInParent(string adress, Transform parent);
     }
 }

@@ -1,6 +1,7 @@
 using Infrastructure.AssetManagement;
 using Infrastructure.Factory;
 using Infrastructure.Services;
+using Infrastructure.Services.IAP;
 using Infrastructure.Services.LevelTransferService;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.ProgressDescription;
@@ -48,15 +49,25 @@ namespace Infrastructure.States
             RegisterSingle<IInputService>(GetInputService());
             RegisterSingle<IRandomService>(new RandomService());
             RegisterSingle<IAdsService>(new AdsService());
-            
+            RegisterIapService(new IAPProvider(), GetSingle<IPersistantProgressService>());
+
             RegisterSingle<IUIFactory>(new UIFactory(
                 GetSingle<IAssetProvider>(),
                 GetSingle<IStaticDataService>(),
                 GetSingle<IPersistantProgressService>(),
-                GetSingle<IAdsService>(), GetSingle<IGameProcessService>()));
+                GetSingle<IAdsService>(), 
+                GetSingle<IGameProcessService>(),
+                GetSingle<IIAPService>()));
             RegisterSingle<IWindowService>(new WindowService(GetSingle<IUIFactory>()));
 
             RegisterGameFactory();
+        }
+
+        private void RegisterIapService(IAPProvider iapProvider, IPersistantProgressService persistantProgressService)
+        {
+            var iapService = new IAPService(iapProvider, persistantProgressService);
+            iapService.Initialize();
+            RegisterSingle<IIAPService>(iapService);
         }
 
         private void RegisterAssetProvider()

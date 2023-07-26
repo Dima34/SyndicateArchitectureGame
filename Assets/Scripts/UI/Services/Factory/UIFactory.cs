@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Infrastructure;
 using Infrastructure.AssetManagement;
+using Infrastructure.Services.IAP;
 using Infrastructure.Services.PersistantProgress;
 using Infrastructure.Services.StaticData;
 using Infrastructure.States;
@@ -18,15 +19,17 @@ namespace UI.Services.Factory
         private readonly IPersistantProgressService _progerssService;
         private IAdsService _adsService;
         private IGameProcessService _gameProcessService;
+        private IIAPService _iapService;
 
         public UIFactory(IAssetProvider assetProvider, IStaticDataService staticData,
-            IPersistantProgressService progerssService, IAdsService adsService, IGameProcessService gameProcessService)
+            IPersistantProgressService progerssService, IAdsService adsService, IGameProcessService gameProcessService, IIAPService iapService)
         {
             _assetProvider = assetProvider;
             _staticData = staticData;
             _progerssService = progerssService;
             _adsService = adsService;
             _gameProcessService = gameProcessService;
+            _iapService = iapService;
         }
         
         public async Task CreatUIRoot()
@@ -40,7 +43,7 @@ namespace UI.Services.Factory
             var config = _staticData.ForWindow(WindowID.Shop);
             ShopWindow window = Object.Instantiate(config.Prefab, _uiRoot) as ShopWindow;
             
-            window.Construct(_adsService,_progerssService, _gameProcessService);
+            window.Construct(_adsService,_progerssService, _gameProcessService, _assetProvider, _iapService);
         }
 
         public void CreateUIConsole() =>
